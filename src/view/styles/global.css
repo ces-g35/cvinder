@@ -52,6 +52,10 @@ body {
   flex-direction: column;
 }
 
+.flex-grow {
+  flex: 1 1 0;
+}
+
 .flex-row {
   flex-direction: row;
 }
@@ -1170,4 +1174,19 @@ body {
 .border-4 {
   border-width: 4px;
   border-style: solid;
+}
+.overflow-y-scroll {
+  overflow-y: scroll;
+}
+
+.overflow-x-scroll {
+  overflow-x: scroll;
+}
+
+.overflow-x-hidden {
+  overflow-x: hidden;
+}
+
+.overflow-y-hidden {
+  overflow-y: hidden;
 }

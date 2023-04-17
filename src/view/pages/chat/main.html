@@ -1,0 +1,112 @@
+<script>
+  window.useGuard();
+  const chatViewDiv = document.getElementById("chat-views")
+
+  const chatViews = {}
+
+  function updateMessage(newMessage) {
+    if (newMessage.author in chatViews) {
+      const messageDiv = chatViews[newMessage.author];
+
+      chatViewDiv.prepend(messageDiv);
+
+      messageDiv.children[1].children[1].innerText = newMessage.payload;
+    }
+  }
+
+  async function fetchChats() {
+    const fetchChatViews = await (await fetch("/api/chat")).json();
+
+    fetchChatViews.forEach(addChatView)
+  }
+
+  function addChatView(chatView) {
+    const element = chatViewToElement(chatView);
+
+    chatViews[chatView.recipient_id] = element;
+
+    chatViewDiv.appendChild(element);
+  }
+
+  function chatViewToElement(obj) {
+    // 1  <div class="flex py-4">
+    // 2    <div>
+    // 3      <img src="/icons/user-bottom.svg" style="height: 60px;"/>
+    // 4    </div>
+    // 5    <div class="flex-grow flex flex-col overflow-x-hidden">
+    // 6      <h3 class="m-0 py-1 px-2">
+    // 7        user name
+    // 8      </h3>
+    // 9      <h5 class="m-0 py-1 px-2">
+    // 10       message
+    // 11    </h5>
+    // 12  </div>
+    // 13</div>
+
+    const div = document.createElement("div"); // 1
+    const div_0_div = document.createElement("div"); // 2
+    const div_0_div_0_img = document.createElement("img");
+    const div_1_div  = document.createElement("div");
+    const div_1_div_0_h3 = document.createElement("h3");
+    const div_1_div_1_h5 = document.createElement("h5");
+
+    div.append(div_0_div, div_1_div);
+    div_0_div.append(div_0_div_0_img);
+    div_1_div.append(div_1_div_0_h3, div_1_div_1_h5);
+
+    div.classList.add("flex", "py-4");
+    // TODO: add user img
+    div_0_div_0_img.setAttribute("src", "/icons/user-bottom.svg");
+    div_0_div_0_img.style.height = "60px";
+    div_1_div.classList.add("flex-grow", "flex", "flex-col", "overflow-x-hidden");
+    div_1_div_0_h3.classList.add("m-0", "py-1", "px-2");
+    div_1_div_1_h5.classList.add("m-0", "py-1", "px-2");
+
+    // TODO: add user name
+    div_1_div_0_h3.innerText = obj.recipient_id;
+    div_1_div_1_h5.innerText = obj.message;
+
+    div.addEventListener("click", () => {
+      router.push(`/chat/${obj.recipient_id}`)
+    })
+
+    return div;
+  }
+
+  function init() {
+    fetchChats();
+
+    const es = new EventSource("/api/chat/subscribe", { withCredentials: true });
+
+    es.addEventListener("_message", (e) => {
+      const eventPayload = JSON.parse(e.data).payload;
+      
+      updateMessage(eventPayload);
+    })
+  }
+
+  init();
+</script>
+
+<style>
+  ::-webkit-scrollbar-thumb {
+    background-color: rgb(251, 170, 170);
+    border-radius: 50px;
+  }
+
+  ::-webkit-scrollbar {
+    width: .5em;
+    height: .5em;
+  }
+</style>
+<div class="h-full flex relative flex-col scroll">
+  <div class="flex overflow-x-scroll">
+    <h2>new match1</h2>
+    <h2>new match2</h2>
+    <h2>new match3</h2>
+    <h2>new match5</h2>
+    <h2>new match5</h2>
+  </div>
+  <div class="flex-grow overflow-y-scroll scroll" id="chat-views">
+  </div>
+</div> 

@@ -1,0 +1,198 @@
+<script>
+  window.useGuard();
+  let messagePayload = "";
+  let firstFetch = true;
+  let lastKey = "";
+  const { id: to } = window.useParam();
+
+  const chat = document.getElementById("chat");
+
+  document.getElementById("message-payload").addEventListener("change", (e) => {
+    messagePayload = e.target.value;
+    console.log(messagePayload);
+  });
+
+  async function fetchHistory() {
+    let url = `/api/chat/${to}`;
+    if (lastKey != "") {
+      url += `?q=${lastKey}`;
+    }
+
+    const data = await (await fetch(url)).json();
+
+    lastKey = data.lastKey;
+
+    data.messages.forEach((message) => {
+      const messageElement = toElement(message, false);
+
+      pushBack(messageElement);
+    });
+
+    console.log(data);
+  };
+
+  function init() {
+    fetchHistory();
+    scrollToBottom();
+
+    const es = new EventSource("/api/chat/subscribe", { withCredentials: true })
+
+    es.addEventListener("_message", (event) => {
+      console.log('received _message event:', event);
+      handleMessage(JSON.parse(event.data).payload)
+    })
+    
+    es.addEventListener("seen", (event) => {
+      console.log('received seen event:', event);
+      handleSeen(JSON.parse(event.data).payload)
+    })
+  }
+
+  function pushFront(newItem) {
+    chat.appendChild(newItem);
+  }
+
+  function pushBack(newItem) {
+    chat.insertBefore(newItem, chat.firstChild);
+  }
+
+  function toElement(message) {
+    const ret = document.createElement("li");
+
+    const div = document.createElement("div");
+
+    div.innerText = message.payload;
+    div.classList.add("rounded-xl", "w-fit-content", "p-4")
+    ret.classList.add("p-1", "flex")
+
+    if (message.author == to) {
+      div.classList.add("recipient-message");
+      ret.classList.add("recipient-container");
+      ret.classList.add("p-1", "flex", "justify-start")
+    } else {
+      div.classList.add("self-message");
+      ret.classList.add("self-container");
+      ret.classList.add("p-1", "flex", "justify-end")
+    }
+
+    ret.appendChild(div);
+
+    return ret;
+  }
+
+  document.getElementById("message-payload").addEventListener("keypress", (event) => {
+    console.log(event, event.key)
+    if(event.key == "Enter") {
+      sendMessage();
+    }
+  });
+
+  document.getElementById("send").addEventListener("click", (event) => {
+    sendMessage();
+  });
+
+  async function sendMessage() {
+    if (messagePayload == "") {
+      return;
+    }
+
+    const message = {
+      payload: messagePayload,
+      author: "", // TODO: userId
+      created_date: Date.now(),
+      seen: false,
+    };
+
+    const messageElement = toElement(message);
+    messageElement.firstChild.classList.add("sending");
+
+    pushFront(messageElement);
+
+    scrollToBottom();
+
+    let url = `/api/chat/${to}`;
+
+    const fetchOption = {
+      method: "POST",
+      body: JSON.stringify({
+        payload: messagePayload,
+      }),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    };
+
+    messagePayload = "";
+    document.getElementById("message-payload").value = "";
+
+    let data;
+
+    try {
+      data = await fetch(url, fetchOption);
+
+      messageElement.firstChild.classList.remove("sending");
+    } catch {
+      messageElement.remove();
+    }
+
+    console.log(data.status);
+  }
+
+  function handleMessage(message) {
+    const element = toElement(message);
+    pushFront(element);
+    scrollToBottom();
+  }
+
+  function handleSeen(payload) {
+    // TODO
+  }
+
+  function scrollToBottom() {
+    document.getElementById("conversation").scrollBy(0, 10000000);
+  }
+
+  document.getElementById("conversation").addEventListener("scroll", (e) => {
+    if (e.target.scrollTop == 0 && lastKey) {
+      fetchHistory()
+    }
+  })
+
+  init();
+
+</script>
+
+<style>
+  .self-message {
+      background-color: lightgreen;
+      border-bottom-right-radius: 3px;
+      text-align: end;
+  }
+  
+  .recipient-message {
+      background-color: #DDD;
+      text-align: start;
+      border-bottom-left-radius: 3px;
+  }
+  
+  .sending {
+    background-color: green;
+  }
+</style>
+
+<div class="h-full flex flex-col py-4">
+  <div class="flex flex-col gap-2" id="control-panel">
+    <div id="recipient">
+      <!-- TODO: add recipient div -->
+    </div>
+  </div>
+  <div class="flex-grow overflow-y-scroll" id="conversation">
+    <ul id="chat" class="m-0 h-full" style="list-style-type: none;">
+    </ul>
+  </div>
+  <div class="justify-between flex">
+      <input type="text" id="message-payload" class="w-full rounded-lg" placeholder="Type a message..."></input>
+      <button id="send" class="rounded-lg">send</button>
+  </div>
+</div>
+

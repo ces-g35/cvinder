@@ -46,6 +46,13 @@ app.use("/api", router);
 
 router.use("/auth", routes.authRoute);
 router.use(
+  "/chat",
+  middlewares.authMiddleware.authMiddleware,
+  middlewares.authMiddleware.isUserMiddleware,
+  routes.chatRoute
+);
+router.use("/match", routes.matchRoute);
+router.use(
   "/user",
   middlewares.authMiddleware.authMiddleware,
   middlewares.authMiddleware.isUserMiddleware,
