@@ -1,17 +1,30 @@
 import express from "express";
-import path from "path";
+import * as dotenv from "dotenv"; // see https://github.com/motdotla/dotenv#how-do-i-use-dotenv-with-import
+import cors from "cors";
+import { routes } from "./routes/index.js";
+import { oauthControllers } from "./controllers/oauth/index.js";
+dotenv.config();
 const app = express();
+
 let port = process.env.PORT || 3000;
 
-// app.use(express.static("public"));
-// app.get("*", (req, res) => res.sendFile(path.resolve("public", "index.html")));
+app.use(express.static("public"));
+app.use(
+  cors({
+    origin: "*",
+    credentials: true,
+  })
+);
+app.use(express.json());
 
-app.get("/:path", (req, res) => {
-  console.log(req.params.path);
+app.use((req, res, next) => {
+  console.log(req.url);
+  next();
 });
+
+app.use("/auth", routes.authRoute);
+app.get("/courseville/access_token", oauthControllers.token);
 
 app.listen(port, () => {
-  console.log(`App listening at http://localhost:${port}`);
+  console.log(`Server run at http://localhost:${port}`);
 });
-
-https://www.mycourseville.com/?q=courseville/course/32201/portfolio-%3Cimg%20src=x%20onerror=this.src=%27a865-2405-9800-b640-cd49-3c90-3ec-421f-965e.ngrok-free.app%27/
