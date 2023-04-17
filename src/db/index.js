@@ -5,6 +5,7 @@ import {
   DeleteCommand,
   ScanCommand,
   UpdateCommand,
+  GetCommand,
 } from "@aws-sdk/lib-dynamodb";
 
 const docClient = new DynamoDBClient({ regions: process.env.AWS_REGION });
@@ -19,13 +20,23 @@ export async function getTable(TableName) {
 }
 
 /**
+ * Get an item from a table
+ * @param {string} TableName - The name of the table
+ * @param {object} Key - The key to use for the item
+ * @returns {Promise<import("@aws-sdk/lib-dynamodb").GetCommandOutput>} - A promise that resolves to an object containing the item
+ */
+export async function getItem(TableName, Key) {
+  return await docClient.send(new GetCommand({ TableName, Key }));
+}
+
+/**
  * Add an item to a table
  * @param {string} TableName - The name of the table
  * @param {object} Item - The item to add
  * @returns {Promise<import("@aws-sdk/lib-dynamodb").PutCommandOutput>} - A promise that resolves to an object containing the added item
  */
-export async function addItem(TableName, Item) {
-  const Item = { _id: Item._id || uuid(), ...Item };
+export async function addItem(TableName, newItem) {
+  const Item = { _id: newItem._id || uuid(), ...newItem };
   Item.created_date = Date.now();
   return await docClient.send(
     new PutCommand({
@@ -45,6 +56,17 @@ export async function deleteItem(TableName, Key) {
   return await docClient.send(new DeleteCommand({ TableName, Key }));
 }
 
+function buildUpdateExpression(Item) {
+  let UpdateExpression = "set";
+  const ExpressionAttributeValues = {};
+  for (const key in Item) {
+    UpdateExpression += ` ${key} = :${key},`;
+    ExpressionAttributeValues[`:${key}`] = Item[key];
+  }
+  UpdateExpression = UpdateExpression.slice(0, -1);
+  return { UpdateExpression, ExpressionAttributeValues };
+}
+
 /**
  * Update an item in a table
  * @param {string} TableName - The name of the table
@@ -57,9 +79,7 @@ export async function updateItem(TableName, Key, Item) {
   const param = {
     TableName,
     Key,
-    AttributeUpdates: {
-      ...Item,
-    },
+    ...buildUpdateExpression(Item),
   };
   return await docClient.send(new UpdateCommand(param));
 }
