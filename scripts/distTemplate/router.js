@@ -3,7 +3,7 @@ import route from "./route.js";
 const rootElement = document.getElementById("root");
 const render = (root, data) => {
   root.innerHTML = data.html;
-  if (data.onLoad) data.onLoad();
+  if (data.pageDidMount) data.pageDidMount();
 };
 
 const router = async () => {
