@@ -9,7 +9,7 @@
     "uuid": "^9.0.0"
   },
   "scripts": {
-    "dev": "node --watch src/index.js ",
+    "dev": "node scripts/dev.js",
     "start": "node src/index.js"
   },
   "type": "module"

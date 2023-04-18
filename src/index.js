@@ -34,7 +34,7 @@ router.use("/auth", routes.authRoute);
 
 const rootRouter = express.Router();
 
-const buildPath = path.normalize(path.join(__dirname, "../public"));
+const buildPath = path.normalize(path.join(__dirname, "../dist"));
 app.use(express.static(buildPath));
 
 rootRouter.get("(/*)?", async (req, res) => {
