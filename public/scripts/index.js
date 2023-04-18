@@ -1,25 +1,28 @@
-import error404 from "./components/404.js";
-import index from "./components/index.js";
-import interests from "./components/interests.js";
-import photo from "./components/photo.js";
-
 const rootElement = document.getElementById("root");
 const render = (root, data) => {
   root.innerHTML = data.html;
   if (data.onLoad) data.onLoad();
 };
 
-switch (window.location.pathname) {
-  case "/":
-    render(rootElement, index);
-    break;
-  case "/interests":
-    render(rootElement, interests);
-    break;
-  case "/add-photos":
-    render(rootElement, photo);
-    break;
-  default:
-    render(rootElement, error404);
-    break;
-}
+const router = async () => {
+  switch (window.location.pathname) {
+    case "/":
+      const index = await import("./components/index.js");
+      render(rootElement, index.default);
+      break;
+    case "/interests":
+      const interests = await import("./components/interests.js");
+      render(rootElement, interests.default);
+      break;
+    case "/add-photos":
+      const photodefault = await import("./components/photo.js");
+      render(rootElement, photodefault);
+      break;
+    default:
+      const error404 = await import("./components/404.js");
+      render(rootElement, error404.default);
+      break;
+  }
+};
+
+router();

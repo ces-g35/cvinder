@@ -1,5 +1,5 @@
 window.index__signin = () => {
-  window.location.href = "/interests";
+  window.location.href = "/api/auth/login";
   // Assume that the user is logged in
 };
 

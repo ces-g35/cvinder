@@ -6,7 +6,8 @@ const redirect_uri = `http://${process.env.URL}/courseville/access_token`;
 const authorization_url = `https://www.mycourseville.com/api/oauth/authorize?response_type=code&client_id=${process.env.CLIENT_ID}&redirect_uri=${redirect_uri}`;
 
 /**
- * @param {import("express").Request} _req
+ * @param {import("express").Request} req
+ * @param {import("express").Response} res
  */
 function oauthLogin(_req, res) {
   res.redirect(authorization_url);
@@ -40,10 +41,22 @@ async function token(req, res) {
   };
 
   const response = await (await fetch(OAUTH_TOKEN_URL, options)).json();
-  res.json(response);
+  // res.json(response);
+  res.redirect(
+    `/interests/?access_token=${response.access_token}&refresh_token=${response.refresh_token}`
+  );
+}
+
+/**
+ * @param {import("express").Request} req
+ * @param {import("express").Response} res
+ */
+async function refreshToken(req, res) {
+  //TODO: Implement refresh token
 }
 
 export const oauthControllers = {
   oauthLogin,
   token,
+  refreshToken,
 };
