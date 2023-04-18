@@ -48,6 +48,10 @@ export const buildDev = () => {
     recursive: true,
   });
 
+  fs.cpSync(path.join(__dirname, "../public"), distPath, {
+    recursive: true,
+  });
+
   // copy scripts and style
   fs.cpSync(path.join(viewPath, "scripts"), path.join(distPath, "scripts"), {
     recursive: true,
