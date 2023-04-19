@@ -1,15 +1,18 @@
 import express from "express";
 import * as dotenv from "dotenv"; // see https://github.com/motdotla/dotenv#how-do-i-use-dotenv-with-import
 import cors from "cors";
-import { routes } from "./routes/index.js";
-import { oauthControllers } from "./controllers/oauth/index.js";
 import { fileURLToPath } from "url";
 import path from "path";
+import { routes } from "./routes/index";
+import { oauthControllers } from "./controllers/oauth/index";
+
 dotenv.config();
 const app = express();
 
 const port = process.env.PORT || 3000;
+// eslint-disable-next-line no-underscore-dangle
 const __filename = fileURLToPath(import.meta.url);
+// eslint-disable-next-line no-underscore-dangle
 const __dirname = path.dirname(__filename);
 
 app.use(

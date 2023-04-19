@@ -1,12 +1,12 @@
-import { v4 as uuid } from "uuid";
-import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
+import { v4 as uuid } from 'uuid';
+import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
 import {
   PutCommand,
   DeleteCommand,
   ScanCommand,
   UpdateCommand,
   GetCommand,
-} from "@aws-sdk/lib-dynamodb";
+} from '@aws-sdk/lib-dynamodb';
 
 const docClient = new DynamoDBClient({ regions: process.env.AWS_REGION });
 
@@ -42,7 +42,7 @@ export async function addItem(TableName, newItem) {
     new PutCommand({
       TableName,
       Item,
-    })
+    }),
   );
 }
 
@@ -57,7 +57,7 @@ export async function deleteItem(TableName, Key) {
 }
 
 function buildUpdateExpression(Item) {
-  let UpdateExpression = "set";
+  let UpdateExpression = 'set';
   const ExpressionAttributeValues = {};
   for (const key in Item) {
     UpdateExpression += ` ${key} = :${key},`;

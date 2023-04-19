@@ -3,7 +3,7 @@
  * @param {import('express').Response} res
  */
 async function updateUsername(req, res) {
-  //TODO: Implement update username
+  // TODO: Implement update username
 }
 
 /**
@@ -11,7 +11,7 @@ async function updateUsername(req, res) {
  * @param {import('express').Response} res
  */
 async function updateBirthDate(req, res) {
-  //TODO: Implement update birthdate
+  // TODO: Implement update birthdate
 }
 
 /**
@@ -19,7 +19,7 @@ async function updateBirthDate(req, res) {
  * @param {import('express').Response} res
  */
 async function updateGender(req, res) {
-  //TODO: Implement update gender
+  // TODO: Implement update gender
 }
 
 /**
@@ -27,7 +27,7 @@ async function updateGender(req, res) {
  * @param {import('express').Response} res
  */
 async function updateInterests(req, res) {
-  //TODO: Implement update interests
+  // TODO: Implement update interests
 }
 
 export const userControllers = {

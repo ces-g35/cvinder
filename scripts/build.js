@@ -44,7 +44,7 @@ function* walkSync(dir) {
   }
 }
 
-const route = {}
+const route = {};
 
 const getLayout = (filePath) => {
   const layoutPath = path.join(filePath, "__layout.html");
@@ -137,7 +137,7 @@ export const buildDev = () => {
   });
 
   fs.mkdirSync(distPagePath);
-  
+
   walkAndGenerate(pagePath);
 
   fs.writeFileSync(
