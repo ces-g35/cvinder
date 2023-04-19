@@ -57,7 +57,12 @@ server.listen(() => {
   console.log(`Started dev server on port ${DEV_PORT}`);
 });
 
-process.on("SIGTERM", () => {
-  console.info("Gracefully shutting down");
+const gracefulShutdown = () => {
+  console.info("Gracefully shutting down ...");
   serverChild.kill();
-});
+  process.exit(0);
+};
+
+process.on("SIGTERM", gracefulShutdown);
+process.on("SIGINT", gracefulShutdown);
+process.on("exit", gracefulShutdown);
