@@ -38,7 +38,7 @@ const distPagePath = path.join(distPath, "pages");
 
 const generatePage = (scriptContent, htmlContent) => `
 export const html = \`${htmlContent.trim()}\`;
-export const pageDidMount = (...param) => ${scriptContent.trim()};
+export const pageDidMount = (...param) => {${scriptContent.trim()}};
 `;
 
 export const buildDev = () => {

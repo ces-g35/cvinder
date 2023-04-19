@@ -41,8 +41,8 @@ buildDev();
 
 watcher.on("change", (_, filename) => {
   console.log(`File ${filename} changed`);
-  buildDev();
   serverChild.kill();
+  buildDev();
 
   whenServerAvaliable(PORT).then(() => {
     console.log("Server restarted");
