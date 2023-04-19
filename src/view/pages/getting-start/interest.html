@@ -1,0 +1,29 @@
+<script>
+  window.login = () => {
+    window.location.href = "api/auth/login";
+  };
+</script>
+
+<div class="flex min-h-screen flex w-full">
+  <div class="mx-auto w-full max-w-sm border flex flex-col">
+    <div class="w-full flex bg-secondary">
+      <div class="bg-primary h-1" style="width: 80%"></div>
+    </div>
+    <div class="mx-12 flex h-full flex-col">
+      <div class="text-3xl mt-10 font-bold">Interests</div>
+      <div class="text-secondary mt-3 text-sm">
+        Let everyone know what you’re interested in by adding it to your
+        profile.
+      </div>
+      <div class="h-full">
+        <div id="interests__wrap" class="flex flex-wrap gap-2 my-2"></div>
+      </div>
+      <div
+        id="interests__continue"
+        class="my-12 text-center font-bold rounded-full bg-button-secondary text-secondary-contrast p-2"
+      >
+        CONTINUE <span id="interests__count"></span>
+      </div>
+    </div>
+  </div>
+</div>

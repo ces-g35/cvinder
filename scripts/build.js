@@ -20,6 +20,19 @@ devServer.onmessage = (event) => {
 </script>
 `;
 
+const viewPath = path.join(__dirname, "../src/view");
+const distPath = path.join(__dirname, "../dist");
+const pagePath = path.join(viewPath, "pages");
+const distPagePath = path.join(distPath, "pages");
+
+const generatePage = (scriptContent, htmlContent, layout) => {
+  if (layout) {
+    htmlContent = layout.replace("<slot></slot>", htmlContent);
+  }
+
+  return `export const html = \`${htmlContent.trim()}\`; export const pageDidMount = (...param) => {${scriptContent.trim()}};`;
+};
+
 function* walkSync(dir) {
   const files = fs.readdirSync(dir, { withFileTypes: true });
   for (const file of files) {
@@ -31,15 +44,78 @@ function* walkSync(dir) {
   }
 }
 
-const viewPath = path.join(__dirname, "../src/view");
-const distPath = path.join(__dirname, "../dist");
-const pagePath = path.join(viewPath, "pages");
-const distPagePath = path.join(distPath, "pages");
+const route = {}
 
-const generatePage = (scriptContent, htmlContent) => `
-export const html = \`${htmlContent.trim()}\`;
-export const pageDidMount = (...param) => {${scriptContent.trim()}};
-`;
+const getLayout = (filePath) => {
+  const layoutPath = path.join(filePath, "__layout.html");
+  if (fs.existsSync(layoutPath)) {
+    return fs.readFileSync(layoutPath, "utf8");
+  }
+  return null;
+};
+
+const nestLayout = (layouts) => {
+  let result = "<slot></slot>";
+  for (const layout of layouts.reverse()) {
+    if (layout) {
+      result = layout.replace("<slot></slot>", result);
+    }
+  }
+  return result;
+};
+
+function walkAndGenerate(dir, parent = [dir]) {
+  const files = fs.readdirSync(dir, { withFileTypes: true });
+  for (const file of files) {
+    const filePath = path.join(dir, file.name);
+    if (file.isDirectory()) {
+      walkAndGenerate(filePath, [...parent, filePath]);
+    } else {
+      if (file.name == "__layout.html") {
+        continue;
+      }
+      const currentLayout = nestLayout(parent.map((p) => getLayout(p)));
+      const routeName = filePath.replace(pagePath, "").replace(".html", "");
+      const matchRouteName = [];
+      matchRouteName.push(filePath.replace(pagePath, "").replace(".html", ""));
+      if (routeName.endsWith("/index")) {
+        matchRouteName.push(routeName.replace("/index", "/"));
+        matchRouteName.push(routeName.replace("/index", ""));
+      }
+
+      let pageName = filePath
+        .replace(pagePath, "")
+        .replace(".html", "")
+        .replace(/\//g, "_");
+
+      if (pageName.startsWith("_")) {
+        pageName = pageName.slice(1);
+      }
+
+      pageName = `${pageName}.js`;
+
+      const matchScript = /<script>(.|\n)*?<\/script>/g;
+
+      const htmlContent = fs.readFileSync(filePath, "utf8");
+      const scriptContent = htmlContent
+        .match(matchScript)[0]
+        .replace(/<script>|<\/script>/g, "");
+
+      fs.writeFileSync(
+        path.join(distPagePath, pageName),
+        generatePage(
+          scriptContent,
+          htmlContent.replace(matchScript, ""),
+          currentLayout
+        )
+      );
+
+      matchRouteName.forEach((routeName) => {
+        route[routeName] = `./pages/${pageName}`;
+      });
+    }
+  }
+}
 
 export const buildDev = () => {
   fs.rmSync(distPath, { recursive: true, force: true });
@@ -61,44 +137,8 @@ export const buildDev = () => {
   });
 
   fs.mkdirSync(distPagePath);
-
-  const route = {};
-
-  for (const filePath of walkSync(pagePath)) {
-    const routeName = filePath.replace(pagePath, "").replace(".html", "");
-    const matchRouteName = [];
-    matchRouteName.push(filePath.replace(pagePath, "").replace(".html", ""));
-    if (routeName.endsWith("/index")) {
-      matchRouteName.push(routeName.replace("/index", "/"));
-      matchRouteName.push(routeName.replace("/index", ""));
-    }
-
-    let pageName = filePath
-      .replace(pagePath, "")
-      .replace(".html", "")
-      .replace(/\//g, "_");
-    if (pageName.startsWith("_")) {
-      pageName = pageName.slice(1);
-    }
-
-    pageName = `${pageName}.js`;
-
-    const matchScript = /<script>(.|\n)*?<\/script>/g;
-
-    const htmlContent = fs.readFileSync(filePath, "utf8");
-    const scriptContent = htmlContent
-      .match(matchScript)[0]
-      .replace(/<script>|<\/script>/g, "");
-
-    fs.writeFileSync(
-      path.join(distPagePath, pageName),
-      generatePage(scriptContent, htmlContent.replace(matchScript, ""))
-    );
-
-    matchRouteName.forEach((routeName) => {
-      route[routeName] = `./pages/${pageName}`;
-    });
-  }
+  
+  walkAndGenerate(pagePath);
 
   fs.writeFileSync(
     path.join(distPath, "route.js"),

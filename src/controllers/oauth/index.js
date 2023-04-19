@@ -43,7 +43,7 @@ async function token(req, res) {
   const response = await (await fetch(OAUTH_TOKEN_URL, options)).json();
   // res.json(response);
   res.redirect(
-    `/interests/?access_token=${response.access_token}&refresh_token=${response.refresh_token}`
+    `/signin/?access_token=${response.access_token}&refresh_token=${response.refresh_token}`
   );
 }
 
