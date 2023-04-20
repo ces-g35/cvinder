@@ -2,28 +2,26 @@
   window.login = () => {
     window.location.href = "api/auth/login";
   };
+
+  document.getElementById("getting-start-progress").style = `width: 40%`;
 </script>
 
-<div class="flex min-h-screen flex w-full">
-  <div class="mx-auto w-full max-w-sm border flex flex-col">
-    <div class="w-full flex bg-secondary">
-      <div class="bg-primary h-1" style="width: 80%"></div>
-    </div>
-    <div class="mx-12 flex h-full flex-col">
-      <div class="text-3xl mt-10 font-bold">Interests</div>
-      <div class="text-secondary mt-3 text-sm">
-        Let everyone know what you’re interested in by adding it to your
-        profile.
-      </div>
-      <div class="h-full">
-        <div id="interests__wrap" class="flex flex-wrap gap-2 my-2"></div>
-      </div>
-      <div
-        id="interests__continue"
-        class="my-12 text-center font-bold rounded-full bg-button-secondary text-secondary-contrast p-2"
-      >
-        CONTINUE <span id="interests__count"></span>
-      </div>
-    </div>
+<div class="text-4xl text-black mt-10 font-bold">Interests</div>
+
+<div class="text-secondary mt-3 text-sm">
+  Let everyone know what you’re interested in by adding it to your profile.
+</div>
+<div class="flex flex-wrap gap-2 my-3 w-full">
+  <div
+    class="border-2 rounded-full px-2 text-sm py-1 font-bold text-secondary h-fit-content"
+  >
+    90s Kid
   </div>
+</div>
+<div class="h-full"></div>
+<div
+  onclick="router.push('/getting-start/photo')"
+  class="my-12 text-center font-bold rounded-full bg-button-secondary text-secondary-contrast p-2"
+>
+  CONTINUE
 </div>

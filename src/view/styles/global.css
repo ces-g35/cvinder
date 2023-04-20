@@ -2,6 +2,11 @@
   background: linear-gradient(20.65deg, #ea4080 -9.99%, #ee805f 128.53%);
 }
 
+input {
+  outline: none;
+  border: none;
+}
+
 html {
   margin: 0;
   padding: 0;
@@ -919,6 +924,10 @@ body {
   font-size: 1.875rem;
 }
 
+.text-4xl {
+  font-size: 2.25rem;
+}
+
 .text-center {
   text-align: center;
 }
@@ -1076,4 +1085,48 @@ body {
 
 .hidden {
   display: none;
+}
+
+.text-black {
+  color: #000;
+}
+
+.border-b {
+  border-bottom: 1px solid #ea4080;
+}
+
+.border-b-2 {
+  border-bottom: 2px solid #ea4080;
+}
+
+.border-none {
+  border: none;
+}
+
+.border-primary {
+  border-color: #ea4080;
+}
+
+.border-secondary {
+  border-color: #c6c5c7;
+}
+
+.h-fit-content {
+  height: fit-content;
+}
+
+.-mt-1 {
+  margin-top: -0.25rem;
+}
+
+.-mt-2 {
+  margin-top: -0.5rem;
+}
+
+.-mt-3 {
+  margin-top: -0.75rem;
+}
+
+.text-left {
+  text-align: left;
 }

@@ -1,0 +1,28 @@
+<script>
+  window.login = () => {
+    window.location.href = "api/auth/login";
+  };
+
+  document.getElementById("getting-start-progress").style = `width: 70%`;
+</script>
+
+<div class="text-4xl text-black mt-10 font-bold">Add Photos</div>
+
+<div class="text-secondary mt-3 text-sm">Add at least 2 photos to continue</div>
+<div class="flex w-full gap-4 mt-12">
+  <div class="w-full img-upload rounded-3xl"></div>
+  <div class="w-full img-upload rounded-3xl"></div>
+  <div class="w-full img-upload rounded-3xl"></div>
+</div>
+<div class="flex w-full gap-4 mt-4">
+  <div class="w-full img-upload rounded-3xl"></div>
+  <div class="w-full img-upload rounded-3xl"></div>
+  <div class="w-full img-upload rounded-3xl"></div>
+</div>
+<div class="h-full"></div>
+<div
+  onclick="router.push('/getting-start/welcome')"
+  class="my-12 text-center font-bold rounded-full bg-button-secondary text-secondary-contrast p-2"
+>
+  CONTINUE
+</div>
