@@ -48,6 +48,7 @@ watcher.on("change", (_, filename) => {
     console.log("Server restarted");
     server.clients.forEach((client) => {
       client.write(server.createFrame({ message: "RELOAD" }));
+      client.destroy();
     });
   });
   serverChild = fork(path.join(__dirname, "../src/index.js"));
@@ -57,7 +58,12 @@ server.listen(() => {
   console.log(`Started dev server on port ${DEV_PORT}`);
 });
 
-process.on("SIGTERM", () => {
-  console.info("Gracefully shutting down");
+const gracefulShutdown = () => {
+  console.info("Gracefully shutting down ...");
   serverChild.kill();
-});
+  process.exit(0);
+};
+
+process.on("SIGTERM", gracefulShutdown);
+process.on("SIGINT", gracefulShutdown);
+process.on("exit", gracefulShutdown);
