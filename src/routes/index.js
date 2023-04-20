@@ -1,5 +1,7 @@
 import authRoute from "./auth/index.js";
+import userRoute from "./user/index.js";
 
-export const routes = {
+export default {
   authRoute,
+  userRoute,
 };

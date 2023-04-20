@@ -1,4 +1,6 @@
 import dotenv from "dotenv";
+import userRepo from "../../repositories/user/index.js";
+import cvClient from "../../client/courseville/index.js";
 dotenv.config();
 
 const OAUTH_TOKEN_URL = "https://www.mycourseville.com/api/oauth/access_token";
@@ -42,9 +44,12 @@ async function token(req, res) {
 
   const response = await (await fetch(OAUTH_TOKEN_URL, options)).json();
   // res.json(response);
-  res.redirect(
-    `/signin/?access_token=${response.access_token}&refresh_token=${response.refresh_token}`
-  );
+  req.session.accessToken = response.access_token;
+  req.session.refreshToken = response.refresh_token;
+  req.session.expiresAt = Date.now() + response.expires_in;
+  const profile = await cvClient.getProfile(req.session.accessToken);
+  let is_new = await userRepo.isNewUser(profile.id);
+  res.redirect(`/about?is_new=${is_new}`);
 }
 
 /**
@@ -55,7 +60,7 @@ async function refreshToken(req, res) {
   //TODO: Implement refresh token
 }
 
-export const oauthControllers = {
+export default {
   oauthLogin,
   token,
   refreshToken,

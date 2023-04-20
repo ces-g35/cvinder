@@ -1,8 +1,10 @@
 import express from "express";
+import session from "express-session";
 import * as dotenv from "dotenv"; // see https://github.com/motdotla/dotenv#how-do-i-use-dotenv-with-import
 import cors from "cors";
-import { routes } from "./routes/index.js";
-import { oauthControllers } from "./controllers/oauth/index.js";
+import routes from "./routes/index.js";
+import oauthControllers from "./controllers/oauth/index.js";
+import middlewares from "./middlewares/index.js";
 import { fileURLToPath } from "url";
 import path from "path";
 dotenv.config();
@@ -12,6 +14,17 @@ const port = process.env.PORT || 3000;
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+const sessionOptions = {
+  secret: process.env.SECRET || "my-secret",
+  resave: true,
+  saveUninitialized: true,
+  cookie: {
+    // setting this false for http connections
+    secure: false,
+    httpOnly: true,
+  },
+};
+
 app.use(
   cors({
     origin: "*",
@@ -19,18 +32,20 @@ app.use(
   })
 );
 app.use(express.json());
+app.use(session(sessionOptions));
 
 const router = express.Router();
 
 app.get("/courseville/access_token", oauthControllers.token);
 app.use("/api", router);
 
-router.use((req, res, next) => {
-  console.log(req.url);
+app.use((req, res, next) => {
+  console.log(`${req.url} ${JSON.stringify(req.session)}`);
   next();
 });
 
 router.use("/auth", routes.authRoute);
+router.use("/user", middlewares.authMiddleware, routes.userRoute);
 
 const rootRouter = express.Router();
 

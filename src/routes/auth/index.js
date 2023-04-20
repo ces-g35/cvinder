@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { oauthControllers } from "../../controllers/oauth/index.js";
+import oauthControllers from "../../controllers/oauth/index.js";
 
 const router = Router();
 

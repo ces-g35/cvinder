@@ -15,8 +15,8 @@ const docClient = new DynamoDBClient({ regions: process.env.AWS_REGION });
  * @param {string} TableName - The name of the table
  * @returns {Promise<import("@aws-sdk/lib-dynamodb").ScanCommandOutput>} - A promise that resolves to an array of items
  */
-export async function getTable(TableName) {
-  return await docClient.send(new ScanCommand({ TableName }));
+function getTable(TableName) {
+  return docClient.send(new ScanCommand({ TableName }));
 }
 
 /**
@@ -25,8 +25,8 @@ export async function getTable(TableName) {
  * @param {object} Key - The key to use for the item
  * @returns {Promise<import("@aws-sdk/lib-dynamodb").GetCommandOutput>} - A promise that resolves to an object containing the item
  */
-export async function getItem(TableName, Key) {
-  return await docClient.send(new GetCommand({ TableName, Key }));
+function getItem(TableName, Key) {
+  return docClient.send(new GetCommand({ TableName, Key }));
 }
 
 /**
@@ -35,10 +35,10 @@ export async function getItem(TableName, Key) {
  * @param {object} Item - The item to add
  * @returns {Promise<import("@aws-sdk/lib-dynamodb").PutCommandOutput>} - A promise that resolves to an object containing the added item
  */
-export async function addItem(TableName, newItem) {
-  const Item = { _id: newItem._id || uuid(), ...newItem };
+function addItem(TableName, newItem) {
+  const Item = { id: newItem.id || uuid(), ...newItem };
   Item.created_date = Date.now();
-  return await docClient.send(
+  return docClient.send(
     new PutCommand({
       TableName,
       Item,
@@ -52,8 +52,8 @@ export async function addItem(TableName, newItem) {
  * @param {object} Key - The key to use for the item
  * @returns {Promise<import("@aws-sdk/lib-dynamodb").DeleteCommandOutput>} - A promise that resolves to an object containing the deleted item
  */
-export async function deleteItem(TableName, Key) {
-  return await docClient.send(new DeleteCommand({ TableName, Key }));
+function deleteItem(TableName, Key) {
+  return docClient.send(new DeleteCommand({ TableName, Key }));
 }
 
 function buildUpdateExpression(Item) {
@@ -74,12 +74,20 @@ function buildUpdateExpression(Item) {
  * @param {object} Item - The item to update
  * @returns {Promise<import("@aws-sdk/lib-dynamodb").UpdateCommandOutput>} - A promise that resolves to an object containing the updated item
  */
-export async function updateItem(TableName, Key, Item) {
+function updateItem(TableName, Key, Item) {
   /** @type {import("@aws-sdk/lib-dynamodb").UpdateCommandInput} */
   const param = {
     TableName,
     Key,
     ...buildUpdateExpression(Item),
   };
-  return await docClient.send(new UpdateCommand(param));
+  return docClient.send(new UpdateCommand(param));
 }
+
+export default {
+  getTable,
+  getItem,
+  addItem,
+  deleteItem,
+  updateItem,
+};
