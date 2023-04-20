@@ -1,0 +1,60 @@
+<script>
+  var start = null;
+  const swipeable = document.getElementById("swipeable");
+  const swipeableWidth = swipeable.offsetWidth;
+  const swipeableHeight = swipeable.offsetHeight;
+
+  let touchstartX = 0;
+  let touchstartY = 0;
+  swipeable.addEventListener("touchstart", (event) => {
+    touchstartX = event.changedTouches[0].screenX;
+    touchstartY = event.changedTouches[0].screenY;
+    console.log("touchstart", touchstartX, touchstartY);
+  });
+
+  swipeable.addEventListener("touchmove", (event) => {
+    let touchX = event.changedTouches[0].screenX - touchstartX;
+    let touchY = event.changedTouches[0].screenY - touchstartY;
+    console.log("touchmove", touchX, touchY);
+    const translateX = Math.min((touchX / swipeableWidth) * 50, 50);
+    const translateY = Math.min((touchY / swipeableHeight) * 50, 50);
+    const rotate = Math.min((touchX / swipeableWidth) * 10, 10);
+    console.log("translateX", translateX);
+    swipeable.style.transition = "transform 0.5s";
+    swipeable.style.transform = `translateX(${translateX}%) translateY(${translateY}%) rotate(${rotate}deg) rotateY(0deg) scale(1)`;
+  });
+
+  swipeable.addEventListener("touchend", () => {}, false);
+</script>
+
+<div id="swipeable" style="z-index: 99" class="absolute h-full flex w-full">
+  <div
+    style="
+      flex-grow: 1;
+      background-image: url(https://placehold.co/400x600);
+      background-position: center;
+    "
+    class="my-5 bg-secondary relative"
+  >
+    <div class="absolute bottom-2 w-full flex justify-center gap-4">
+      <img src="/icons/swipe-left.svg" alt="" />
+      <img src="/icons/swipe-right.svg" alt="" />
+    </div>
+  </div>
+</div>
+
+<div style="z-index: 98" class="absolute h-full flex w-full">
+  <div
+    style="
+      flex-grow: 1;
+      background-image: url(https://placehold.co/400x600);
+      background-position: center;
+    "
+    class="my-5 bg-secondary relative"
+  >
+    <div class="absolute bottom-2 w-full flex justify-center gap-4">
+      <img src="/icons/swipe-left.svg" alt="" />
+      <img src="/icons/swipe-right.svg" alt="" />
+    </div>
+  </div>
+</div>

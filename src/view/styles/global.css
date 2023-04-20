@@ -19,6 +19,8 @@ body {
   padding: 0;
   box-sizing: border-box;
   background-color: #f5f5f5;
+  touch-action: none;
+  -ms-touch-action: none;
 }
 
 .flex {
@@ -1129,4 +1131,12 @@ body {
 
 .text-left {
   text-align: left;
+}
+
+.relative {
+  position: relative;
+}
+
+.overflow-hidden {
+  overflow: hidden;
 }
