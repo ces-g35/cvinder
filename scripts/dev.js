@@ -48,6 +48,7 @@ watcher.on("change", (_, filename) => {
     console.log("Server restarted");
     server.clients.forEach((client) => {
       client.write(server.createFrame({ message: "RELOAD" }));
+      client.destroy();
     });
   });
   serverChild = fork(path.join(__dirname, "../src/index.js"));
