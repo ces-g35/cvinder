@@ -12,6 +12,10 @@
   A utility-last CSS framework for rapidly building custom user interfaces.
 </p>
 
+<p align="center">
+  This is NOT A TAILWIND CSS. It's just a fail version of it. (only use their convention)
+</p>
+
 ---
 
 ## Documentation
