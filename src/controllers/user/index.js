@@ -1,47 +1,107 @@
 import db from "../../utils/db/index.js";
+
+/**
+ * @param {object} body
+ */
+function validateUsername(body) {
+  if (!body.username) {
+    throw new Error("Username is required");
+  }
+}
+
+/**
+ * @param {object} body
+ */
+function validateBirthDate(body) {
+  if (!body.birthdate) {
+    throw new Error("Birthdate is required");
+  }
+  if (body.birthdate > Date.now()) {
+    throw new Error("Birthdate is not correct");
+  }
+}
+
+/**
+ * @param {object} body
+ */
+function validateGender(body) {
+  if (!body.gender) {
+    throw new Error("Gender is required");
+  }
+
+  if (body.gender !== "Male" && body.gender !== "Female") {
+    throw new Error("Gender is not correct");
+  }
+}
+
+/**
+ * @param {object} body
+ */
+function validateInterests(body) {
+  if (!body.interests) {
+    throw new Error("Interests is required");
+  }
+
+  if (!Array.isArray(body.interests)) {
+    throw new Error("Interests is not an array");
+  }
+
+  if (body.interests.length < 5) {
+    throw new Error("Interests is less than 5");
+  }
+}
+
+async function updateUser(req, res) {
+  const body = req.body;
+  const id = req.profile.id;
+  const updatedUser = {};
+  try {
+    if (body.username) {
+      validateUsername(body);
+      updatedUser.username = body.username;
+    }
+
+    if (body.birthdate) {
+      validateBirthDate(body);
+      updatedUser.birthdate = body.birthdate;
+    }
+
+    if (body.gender) {
+      validateGender(body);
+      updatedUser.gender = body.gender;
+    }
+
+    if (body.interests) {
+      validateInterests(body);
+      updatedUser.interests = body.interests;
+    }
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+    return;
+  }
+
+  await db.updateItem("user", id, updatedUser);
+  res.sendStatus(204);
+}
+
+async function getProfile(req, res) {
+  res.json(req.profile);
+}
+
 /**
  * @param {import('express').Request} req
  * @param {import('express').Response} res
  */
 async function createUser(req, res) {
   const body = req.body;
-  if (!body.username) {
-    res.status(400).json({ error: "Username is required" });
-    return;
-  }
 
-  if (!body.birthdate) {
-    res.status(400).json({ error: "Birthdate is required" });
-    return;
-  }
-
-  if (body.birthdate > Date.now()) {
-    res.status(400).json({ error: "Birthdate is not correct" });
-    return;
-  }
-
-  if (!body.gender) {
-    res.status(400).json({ error: "Gender is required" });
-    return;
-  }
-
-  if (body.gender !== "Male" && body.gender !== "Female") {
-    res.status(400).json({ error: "Gender is not correct" });
-    return;
-  }
-
-  if (!body.interests) {
-    res.status(400).json({ error: "Interests is required" });
-    return;
-  }
-
-  if (!Array.isArray(body.interests)) {
-    res.status(400).json({ error: "Interests is not an array" });
-    return;
-  }
-
-  if (body.interests.length < 5) {
-    res.status(400).json({ error: "Interests is less than 5" });
+  try {
+    validateUsername(body);
+    validateBirthDate(body);
+    validateGender(body);
+    validateInterests(body);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
     return;
   }
 
@@ -55,125 +115,15 @@ async function createUser(req, res) {
   };
 
   try {
-    const result = await db.addItem("user", { ...newUser });
+    await db.addItem("user", { ...newUser });
     res.sendStatus(201);
   } catch (err) {
     res.status(400).json({ error: "Some thing went wrong" });
   }
 }
 
-/**
- * @param {import('express').Request} req
- * @param {import('express').Response} res
- */
-async function updateUsername(req, res) {
-  const id = req.profile.id;
-  const body = req.body;
-
-  if (!body.username) {
-    res.status(400).json({ error: "Username is required" });
-    return;
-  }
-
-  try {
-    const result = await db.updateItem(
-      "user",
-      { id },
-      { username: body.username }
-    );
-    res.sendStatus(204);
-  } catch (error) {
-    res.status(400).json({ error: "Some thing went wrong" });
-  }
-}
-
-/**
- * @param {import('express').Request} req
- * @param {import('express').Response} res
- */
-async function updateBirthDate(req, res) {
-  const id = req.profile.id;
-  const body = req.body;
-  if (!body.birthdate) {
-    res.status(400).json({ error: "Birthdate is required" });
-    return;
-  }
-
-  if (body.birthdate > Date.now()) {
-    res.status(400).json({ error: "Birthdate is not correct" });
-    return;
-  }
-
-  try {
-    await db.updateItem("user", { id }, { birthdate: body.birthdate });
-    res.sendStatus(204);
-  } catch (error) {
-    res.status(400).json({ error: "Some thing went wrong" });
-  }
-}
-
-/**
- * @param {import('express').Request} req
- * @param {import('express').Response} res
- */
-async function updateGender(req, res) {
-  const id = req.profile.id;
-  const body = req.body;
-  if (!body.gender) {
-    res.status(400).json({ error: "Gender is required" });
-  }
-
-  if (body.gender !== "Male" && body.gender !== "Female") {
-    res.status(400).json({ error: "Gender is not correct" });
-  }
-
-  try {
-    await db.updateItem("user", { id }, { gender: body.gender });
-    res.sendStatus(204);
-  } catch (error) {
-    res.status(400).json({ error: "Some thing went wrong" });
-  }
-}
-
-/**
- * @param {import('express').Request} req
- * @param {import('express').Response} res
- */
-async function updateInterests(req, res) {
-  const id = req.profile.id;
-  const body = req.body;
-  if (!body.interests) {
-    res.status(400).json({ error: "Interests is required" });
-    return;
-  }
-
-  if (!Array.isArray(body.interests)) {
-    res.status(400).json({ error: "Interests is not an array" });
-    return;
-  }
-
-  if (body.interests.length < 5) {
-    res.status(400).json({ error: "Interests is less than 5" });
-    return;
-  }
-
-  try {
-    await db.updateItem("user", { id }, { interests: body.interests });
-    res.sendStatus(204);
-  } catch (error) {
-    res.status(400).json({ error: "Some thing went wrong" });
-  }
-}
-
-async function getProfile(req, res) {
-  res.json(req.profile);
-}
-
 export default {
-  updateInterests,
-  updateGender,
-  updateBirthDate,
-  updateUsername,
-  getProfile,
+  updateUser,
   createUser,
+  getProfile,
 };

@@ -40,12 +40,17 @@ app.get("/courseville/access_token", oauthControllers.token);
 app.use("/api", router);
 
 app.use((req, res, next) => {
-  console.log(`${req.url} ${JSON.stringify(req.session)}`);
+  console.log(`${req.method} ${req.url}`);
   next();
 });
 
 router.use("/auth", routes.authRoute);
-router.use("/user", middlewares.authMiddleware, routes.userRoute);
+router.use(
+  "/user",
+  middlewares.authMiddleware.authMiddleware,
+  middlewares.authMiddleware.isUserMiddleware,
+  routes.userRoute
+);
 
 const rootRouter = express.Router();
 
