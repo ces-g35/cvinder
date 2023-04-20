@@ -3,7 +3,7 @@
     <picture>
       <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/ces-g35/cvinder/main/src/view/styles/failwindcss-dark.png">
       <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/ces-g35/cvinder/main/src/view/styles/failwindcss.png">
-      <img alt="Tailwind CSS" src="https://raw.githubusercontent.com/ces-g35/cvinder/main/src/view/styles/failwindcss.png" width="350" height="70" style="max-width: 100%;">
+      <img alt="Tailwind CSS" src="https://raw.githubusercontent.com/ces-g35/cvinder/main/src/view/styles/failwindcss.png" width="320" height="70" style="max-width: 100%;">
     </picture>
   </a>
 </p>
