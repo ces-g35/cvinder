@@ -44,7 +44,7 @@ function* walkSync(dir) {
   }
 }
 
-const route = {}
+const route = {};
 
 const getLayout = (filePath) => {
   const layoutPath = path.join(filePath, "__layout.html");
@@ -74,6 +74,7 @@ function walkAndGenerate(dir, parent = [dir]) {
       if (file.name == "__layout.html") {
         continue;
       }
+
       const currentLayout = nestLayout(parent.map((p) => getLayout(p)));
       const routeName = filePath.replace(pagePath, "").replace(".html", "");
       const matchRouteName = [];
@@ -94,12 +95,28 @@ function walkAndGenerate(dir, parent = [dir]) {
 
       pageName = `${pageName}.js`;
 
-      const matchScript = /<script>(.|\n)*?<\/script>/g;
+      const matchScript = /<script>(.|\n|\r\n)*?<\/script>/g;
 
       const htmlContent = fs.readFileSync(filePath, "utf8");
       const scriptContent = htmlContent
         .match(matchScript)[0]
         .replace(/<script>|<\/script>/g, "");
+
+      const dirNames = pageName.split(path.sep);
+      dirNames.pop();
+
+      dirNames.reduce((acc, folder) => {
+        if (folder == "") {
+          return acc;
+        }
+        const folderPath = path.join(acc, folder);
+
+        if (!fs.existsSync(folderPath)) {
+          fs.mkdirSync(folderPath);
+        }
+
+        return folderPath;
+      }, distPagePath);
 
       fs.writeFileSync(
         path.join(distPagePath, pageName),
@@ -111,7 +128,11 @@ function walkAndGenerate(dir, parent = [dir]) {
       );
 
       matchRouteName.forEach((routeName) => {
-        route[routeName] = `./pages/${pageName}`;
+        const pagePath = ("." + path.sep + path.join("pages", pageName))
+          .split(path.sep)
+          .join(path.posix.sep);
+        const formatedName = routeName.replaceAll("\\", "/");
+        route[formatedName] = pagePath;
       });
     }
   }
@@ -137,7 +158,7 @@ export const buildDev = () => {
   });
 
   fs.mkdirSync(distPagePath);
-  
+
   walkAndGenerate(pagePath);
 
   fs.writeFileSync(
