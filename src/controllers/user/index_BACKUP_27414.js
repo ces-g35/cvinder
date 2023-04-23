@@ -115,6 +115,9 @@ async function createUser(req, res) {
   };
 
   try {
+<<<<<<< Updated upstream
+    await db.addItem("user", { ...newUser });
+=======
     const Item = { id: uuid(), ...newUser };
     Item.created_date = Date.now();
     const courses = await cvClient.getCourses(accessToken);
@@ -152,6 +155,7 @@ async function createUser(req, res) {
       });
     });
     await docClient.send(new TransactWriteCommand(transactionCommandInput));
+>>>>>>> Stashed changes
     res.sendStatus(201);
   } catch (err) {
     res.status(400).json({ error: "Some thing went wrong" });

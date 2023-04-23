@@ -115,43 +115,7 @@ async function createUser(req, res) {
   };
 
   try {
-    const Item = { id: uuid(), ...newUser };
-    Item.created_date = Date.now();
-    const courses = await cvClient.getCourses(accessToken);
-    /** @type {import('@aws-sdk/lib-dynamodb').TransactWriteCommand} */
-    const transactionCommandInput = {
-      TransactItems: [
-        {
-          Put: {
-            TableName: "user",
-            Item,
-          },
-        },
-      ],
-    };
-
-    courses.forEach(async (course) => {
-      transactionCommandInput.TransactItems.push({
-        Update: {
-          TableName: "courses",
-          Key: { id: `${course.cv_cid}` },
-          UpdateExpression:
-            "SET #uid = list_append(if_not_exists(#uid, :emptyList), :newUserId), updatedAt = :time",
-          ExpressionAttributeNames: {
-            "#uid": "uid",
-          },
-          ExpressionAttributeValues: {
-            ":newUserId": [{ [id]: body.gender }],
-            ":newUserIdItem": { [id]: body.gender },
-            ":emptyList": [],
-            ":time": Date.now(),
-          },
-          ConditionExpression:
-            "(attribute_not_exists(id) or NOT contains(#uid, :newUserIdItem))",
-        },
-      });
-    });
-    await docClient.send(new TransactWriteCommand(transactionCommandInput));
+    await db.addItem("user", { ...newUser });
     res.sendStatus(201);
   } catch (err) {
     res.status(400).json({ error: "Some thing went wrong" });

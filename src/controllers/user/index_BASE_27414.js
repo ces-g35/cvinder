@@ -1,4 +1,7 @@
-import db from "../../utils/db/index.js";
+import cvClient from "../../client/courseville/index.js";
+import { v4 as uuid } from "uuid";
+import { TransactWriteCommand } from "@aws-sdk/lib-dynamodb";
+import { docClient } from "../../utils/db/index.js";
 
 /**
  * @param {object} body
@@ -65,7 +68,6 @@ async function updateUser(req, res) {
       validateBirthDate(body);
       updatedUser.birthdate = body.birthdate;
     }
-
     if (body.gender) {
       validateGender(body);
       updatedUser.gender = body.gender;
@@ -94,6 +96,7 @@ async function getProfile(req, res) {
  */
 async function createUser(req, res) {
   const body = req.body;
+  const accessToken = req.session.accessToken;
 
   try {
     validateUsername(body);
@@ -142,24 +145,32 @@ async function createUser(req, res) {
           },
           ExpressionAttributeValues: {
             ":newUserId": [{ [id]: body.gender }],
-            ":newUserIdItem": { [id]: body.gender },
             ":emptyList": [],
             ":time": Date.now(),
           },
           ConditionExpression:
-            "(attribute_not_exists(id) or NOT contains(#uid, :newUserIdItem))",
+            "(attribute_not_exists(id) or NOT contains(#uid, :newUserId))",
         },
       });
     });
     await docClient.send(new TransactWriteCommand(transactionCommandInput));
     res.sendStatus(201);
   } catch (err) {
+    console.log(err);
     res.status(400).json({ error: "Some thing went wrong" });
+    return;
   }
+}
+
+async function getUserCourses(req, res) {
+  const accessToken = req.session.accessToken;
+  const courses = await cvClient.getCourses(accessToken);
+  res.json(courses);
 }
 
 export default {
   updateUser,
   createUser,
   getProfile,
+  getUserCourses,
 };
