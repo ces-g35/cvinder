@@ -33,6 +33,20 @@ window.useQuery = () => {
   return params;
 };
 
+window.useParam = () => {
+  const path = window.location.pathname.split("?")[0];
+  const filePath = window.globalTree.match(path);
+  const pats = filePath
+    .replace("./pages", "")
+    .replace(".js", "")
+    .replace(".", "\\.")
+    .replaceAll("/", "\\/")
+    .replaceAll(/\[(\w*)\]/g, "(?<$1>[\\w]*)");
+  const pattern = new RegExp(pats, "g");
+
+  return pattern.exec(path).groups;
+};
+
 let globalState = {};
 
 window.getGlobalState = () => globalState;
