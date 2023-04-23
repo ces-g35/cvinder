@@ -1,3 +1,29 @@
+const COOKIE_TTL = 1209600;
+window.useGuard = () => {
+  const IS_LOGGEDIN = localStorage.getItem("CVINDER_IS_LOGGEDIN");
+  if (IS_LOGGEDIN) {
+    const { expiresAt } = JSON.parse(IS_LOGGEDIN);
+    if (expiresAt < Date.now()) {
+      localStorage.removeItem("CVINDER_IS_LOGGEDIN");
+      window.location.href = "/";
+      return;
+    }
+  }
+  fetch("/api/user/me").then((res) => {
+    if (res.status !== 401) {
+      localStorage.setItem(
+        "CVINDER_IS_LOGGEDIN",
+        JSON.stringify({
+          expiresAt: Date.now() + COOKIE_TTL,
+        })
+      );
+    } else {
+      localStorage.removeItem("CVINDER_IS_LOGGEDIN");
+      window.location.href = "/";
+    }
+  });
+};
+
 window.useQuery = () => {
   const query = new URLSearchParams(window.location.search);
   const params = {};

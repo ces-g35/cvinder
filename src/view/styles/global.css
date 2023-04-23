@@ -25,6 +25,7 @@ button:active {
 input {
   outline: none;
   border: none;
+  font-family: "Inter", sans-serif;
 }
 
 html {
