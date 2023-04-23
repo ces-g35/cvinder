@@ -54,6 +54,19 @@ function validateInterests(body) {
   }
 }
 
+/**
+ * @param {object} body
+ */
+function validateGender(body) {
+  if (!body.prefGender) {
+    throw new Error("PrefGender is required");
+  }
+
+  if (body.prefGender !== "Male" && body.prefGender !== "Female") {
+    throw new Error("PrefGender is not correct");
+  }
+}
+
 async function updateUser(req, res) {
   const body = req.body;
   const id = req.profile.id;
@@ -76,6 +89,11 @@ async function updateUser(req, res) {
     if (body.interests) {
       validateInterests(body);
       updatedUser.interests = body.interests;
+    }
+
+    if (body.prefGender) {
+      validateGender(body);
+      updatedUser.prefGender = body.prefGender;
     }
   } catch (error) {
     res.status(400).json({ error: error.message });
@@ -103,6 +121,7 @@ async function createUser(req, res) {
     validateBirthDate(body);
     validateGender(body);
     validateInterests(body);
+    validateGender(body);
   } catch (err) {
     res.status(400).json({ error: err.message });
     return;
@@ -115,6 +134,7 @@ async function createUser(req, res) {
     birthdate: body.birthdate,
     gender: body.gender,
     interests: body.interests,
+    prefGender: body.prefGender,
   };
 
   try {
@@ -134,6 +154,13 @@ async function createUser(req, res) {
       ],
     };
 
+    const createdAt = Date.now();
+    const addedUser = {
+      id,
+      gender: body.gender,
+      createdAt,
+    };
+
     courses.forEach(async (course) => {
       transactionCommandInput.TransactItems.push({
         Update: {
@@ -145,10 +172,10 @@ async function createUser(req, res) {
             "#uid": "uid",
           },
           ExpressionAttributeValues: {
-            ":newUserId": [{ [id]: body.gender }],
-            ":newUserIdItem": { [id]: body.gender },
+            ":newUserId": [addedUser],
+            ":newUserIdItem": addedUser,
             ":emptyList": [],
-            ":time": Date.now(),
+            ":time": createdAt,
           },
           ConditionExpression:
             "(attribute_not_exists(id) or NOT contains(#uid, :newUserIdItem))",
