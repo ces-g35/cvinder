@@ -121,7 +121,8 @@ async function createUser(req, res) {
     const Item = { id: uuid(), ...newUser };
     Item.created_date = Date.now();
     const courses = await cvClient.getCourses(accessToken);
-    /** @type {import('@aws-sdk/lib-dynamodb').TransactWriteCommand} */
+
+    /** @type {import('@aws-sdk/lib-dynamodb').TransactWriteCommandInput} */
     const transactionCommandInput = {
       TransactItems: [
         {
