@@ -8,7 +8,9 @@ import {
   GetCommand,
 } from "@aws-sdk/lib-dynamodb";
 
-const docClient = new DynamoDBClient({ regions: process.env.AWS_REGION });
+export const docClient = new DynamoDBClient({
+  regions: process.env.AWS_REGION,
+});
 
 /**
  * Get all items from a table

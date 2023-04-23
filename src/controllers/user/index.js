@@ -1,4 +1,7 @@
-import db from "../../utils/db/index.js";
+import cvClient from "../../client/courseville/index.js";
+import { v4 as uuid } from "uuid";
+import { TransactWriteCommand } from "@aws-sdk/lib-dynamodb";
+import { docClient } from "../../utils/db/index.js";
 
 /**
  * @param {object} body
@@ -65,7 +68,6 @@ async function updateUser(req, res) {
       validateBirthDate(body);
       updatedUser.birthdate = body.birthdate;
     }
-
     if (body.gender) {
       validateGender(body);
       updatedUser.gender = body.gender;
@@ -94,6 +96,7 @@ async function getProfile(req, res) {
  */
 async function createUser(req, res) {
   const body = req.body;
+  const accessToken = req.session.accessToken;
 
   try {
     validateUsername(body);
@@ -115,15 +118,59 @@ async function createUser(req, res) {
   };
 
   try {
-    await db.addItem("user", { ...newUser });
+    const Item = { id: uuid(), ...newUser };
+    Item.created_date = Date.now();
+    const courses = await cvClient.getCourses(accessToken);
+    /** @type {import('@aws-sdk/lib-dynamodb').TransactWriteCommand} */
+    const transactionCommandInput = {
+      TransactItems: [
+        {
+          Put: {
+            TableName: "user",
+            Item,
+          },
+        },
+      ],
+    };
+
+    courses.forEach(async (course) => {
+      transactionCommandInput.TransactItems.push({
+        Update: {
+          TableName: "courses",
+          Key: { id: `${course.cv_cid}` },
+          UpdateExpression:
+            "SET #uid = list_append(if_not_exists(#uid, :emptyList), :newUserId), updatedAt = :time",
+          ExpressionAttributeNames: {
+            "#uid": "uid",
+          },
+          ExpressionAttributeValues: {
+            ":newUserId": [{ [id]: body.gender }],
+            ":emptyList": [],
+            ":time": Date.now(),
+          },
+          ConditionExpression:
+            "(attribute_not_exists(id) or NOT contains(#uid, :newUserId))",
+        },
+      });
+    });
+    await docClient.send(new TransactWriteCommand(transactionCommandInput));
     res.sendStatus(201);
   } catch (err) {
+    console.log(err);
     res.status(400).json({ error: "Some thing went wrong" });
+    return;
   }
+}
+
+async function getUserCourses(req, res) {
+  const accessToken = req.session.accessToken;
+  const courses = await cvClient.getCourses(accessToken);
+  res.json(courses);
 }
 
 export default {
   updateUser,
   createUser,
   getProfile,
+  getUserCourses,
 };
