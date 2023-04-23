@@ -17,6 +17,27 @@ async function getProfile(accessToken) {
   return profile.user;
 }
 
+/**
+ * @param {string} accessToken
+ * @returns {Promise<[{cv_cid:number, course_no: string, year:string, semester: number, section: string, role: string}]>} user courses
+ */
+async function getCourses(accessToken) {
+  // You should change the response below.
+  const options = {
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  };
+  const courses = await (
+    await fetch(
+      "https://www.mycourseville.com/api/v1/public/get/user/courses",
+      options
+    )
+  ).json();
+  return courses.data.student;
+}
+
 export default {
   getProfile,
+  getCourses,
 };
