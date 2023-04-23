@@ -1,23 +1,96 @@
 <script>
-  window.login = () => {
-    window.location.href = "api/auth/login";
+  const { is_new } = useQuery();
+  console.log(is_new);
+
+  if (is_new === "false") {
+    router.push("/user/swipe");
+  }
+
+  document.getElementById("getting-start-progress").style = `width: 20%`;
+  const manSelector = document.getElementById("man");
+  const womanSelector = document.getElementById("woman");
+  const continueSelector = document.getElementById("continue");
+
+  const enableContinue = () => {
+    continueSelector.classList.add("bg-primary");
+    continueSelector.classList.remove("bg-button-secondary");
+    continueSelector.classList.remove("text-secondary-contrast");
+    continueSelector.classList.add("text-white");
+    continueSelector.removeAttribute("disabled");
+  };
+
+  const disableContinue = () => {
+    continueSelector.classList.remove("bg-primary");
+    continueSelector.classList.add("bg-button-secondary");
+    continueSelector.classList.add("text-secondary-contrast");
+    continueSelector.classList.remove("text-white");
+    continueSelector.setAttribute("disabled", "true");
+  };
+
+  const enableSelector = (selector) => {
+    selector.classList.remove("border-secondary");
+    selector.classList.add("border-primary");
+
+    selector.classList.add("text-primary");
+    selector.classList.remove("text-secondary-contrast");
+  };
+
+  const disableSelector = (selector) => {
+    selector.classList.add("border-secondary");
+    selector.classList.remove("border-primary");
+
+    selector.classList.remove("text-primary");
+    selector.classList.add("text-secondary-contrast");
+  };
+
+  const setSex = useState("sex", "", [
+    (sex) => {
+      if (sex) enableContinue();
+      else disableContinue();
+
+      disableSelector(manSelector);
+      disableSelector(womanSelector);
+
+      switch (sex) {
+        case "MAN":
+          enableSelector(manSelector);
+          break;
+        case "WOMAN":
+          enableSelector(womanSelector);
+          break;
+        default:
+          manSelector.classList.remove("border-primary");
+          womanSelector.classList.remove("border-primary");
+      }
+    },
+  ]);
+  window.userPage = {
+    setSex,
   };
 </script>
 
-<div class="text-4xl text-black mt-10 font-bold">My first name is</div>
-<div class="mt-12">
-  <input
-    type="text"
-    placeholder="First name"
-    class="border-b-2 border-primary bg-transparent p-2 text-xl w-full"
-  />
-</div>
-<div class="text-secondary mt-3 text-sm h-full">
-  This is how it will appear in Cvinder and you will not be able to change it
+<div class="text-4xl text-black mt-10 font-bold">I'm looking for</div>
+<div class="text-secondary mt-3 text-sm mb-12">What are you looking for</div>
+<div
+  id="man"
+  onclick="userPage.setSex(s=> s=='MAN' ? '' : 'MAN')"
+  class="my-3 text-center font-bold rounded-full border-2 border-secondary text-secondary-contrast p-2"
+>
+  MAN
 </div>
 <div
-  onclick="router.push('/getting-start/sex')"
+  id="woman"
+  onclick="userPage.setSex(s=> s=='WOMAN' ? '' : 'WOMAN')"
+  class="my-3 text-center font-bold rounded-full border-2 border-secondary text-secondary-contrast p-2"
+>
+  WOMAN
+</div>
+<div class="h-full"></div>
+<button
+  id="continue"
+  disabled="true"
+  onclick="router.push('/getting-start/interest')"
   class="my-12 text-center font-bold rounded-full bg-button-secondary text-secondary-contrast p-2"
 >
   CONTINUE
-</div>
+</button>

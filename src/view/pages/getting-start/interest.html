@@ -1,9 +1,78 @@
 <script>
-  window.login = () => {
-    window.location.href = "api/auth/login";
+  document.getElementById("getting-start-progress").style = `width: 40%`;
+  const interestsOptions = [
+    "Movies",
+    "Netflix",
+    "Arts",
+    "Music",
+    "Indie Music",
+    "Concerts",
+    "Vintage Shirts",
+    "Algorithm",
+    "Linear Algebra",
+    "Atiwong's Fan Club",
+  ];
+
+  const interestContainer = document.getElementById("interests");
+  const continueSelector = document.getElementById("continue");
+
+  const setInterest = useState(
+    "interest",
+    [],
+    [
+      (interest) => {
+        if (interest.length < 5) {
+          continueSelector.classList.remove("bg-primary");
+          continueSelector.classList.add("bg-button-secondary");
+          continueSelector.classList.add("text-secondary-contrast");
+          continueSelector.classList.remove("text-white");
+          continueSelector.setAttribute("disabled", "true");
+        } else {
+          continueSelector.classList.add("bg-primary");
+          continueSelector.classList.remove("bg-button-secondary");
+          continueSelector.classList.remove("text-secondary-contrast");
+          continueSelector.classList.add("text-white");
+          continueSelector.removeAttribute("disabled");
+        }
+        continueSelector.innerHTML = `CONTINUE ${interest.length}/5`;
+      },
+    ]
+  );
+
+  const selectInterest = (el) => {
+    if (el.classList.contains("border-primary")) {
+      setInterest((prev) => prev.filter((i) => i !== el.innerHTML));
+      el.classList.remove("border-primary");
+      el.classList.add("border-secondary");
+      el.classList.remove("text-primary");
+      el.classList.add("text-secondary");
+    } else {
+      setInterest((prev) => [...prev, el.innerHTML]);
+      el.classList.add("border-primary");
+      el.classList.remove("border-secondary");
+      el.classList.add("text-primary");
+      el.classList.remove("text-secondary");
+    }
   };
 
-  document.getElementById("getting-start-progress").style = `width: 40%`;
+  interestsOptions.map((interest) => {
+    const interestElement = document.createElement("button");
+    interestElement.classList.add(
+      "border-2",
+      "rounded-full",
+      "px-2",
+      "text-sm",
+      "py-1",
+      "font-bold",
+      "text-secondary",
+      "h-fit-content"
+    );
+    interestElement.onclick = () => {
+      selectInterest(interestElement);
+    };
+    interestElement.innerHTML = interest;
+    interestContainer.appendChild(interestElement);
+  });
 </script>
 
 <div class="text-4xl text-black mt-10 font-bold">Interests</div>
@@ -11,17 +80,13 @@
 <div class="text-secondary mt-3 text-sm">
   Let everyone know what you’re interested in by adding it to your profile.
 </div>
-<div class="flex flex-wrap gap-2 my-3 w-full">
-  <div
-    class="border-2 rounded-full px-2 text-sm py-1 font-bold text-secondary h-fit-content"
-  >
-    90s Kid
-  </div>
-</div>
+<div id="interests" class="flex flex-wrap gap-2 my-3 w-full"></div>
 <div class="h-full"></div>
-<div
+<button
+  disabled
+  id="continue"
   onclick="router.push('/getting-start/photo')"
   class="my-12 text-center font-bold rounded-full bg-button-secondary text-secondary-contrast p-2"
 >
   CONTINUE
-</div>
+</button>

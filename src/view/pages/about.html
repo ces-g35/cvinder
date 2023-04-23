@@ -1,28 +1,27 @@
 <script>
   async function printUser() {
-    const profile = await (await fetch('/api/user/courses')).json();
+    const profile = await (await fetch("/api/user/courses")).json();
     document.body.innerHTML += `<h1>${JSON.stringify(profile, 2, null)}</h1>`;
   }
 
   async function createNew() {
-    await fetch('/api/user/', {
-      method: 'POST',
+    await fetch("/api/user/", {
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json'
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({
         username: "peam",
         birthdate: Date.now(),
         gender: "Male",
-        interests: ["Coding", "Reading", "Music", "TEST", "HELLO"]
-      })
-    })
+        interests: ["Coding", "Reading", "Music", "TEST", "HELLO"],
+      }),
+    });
   }
   window.printUser = printUser;
   window.createNew = createNew;
 </script>
 
 <body>
-  <button onclick="window.printUser()">test</button>
-  <button onclick="window.createNew()">create</button>
+  <div class="">aa</div>
 </body>
