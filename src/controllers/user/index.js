@@ -145,11 +145,12 @@ async function createUser(req, res) {
           },
           ExpressionAttributeValues: {
             ":newUserId": [{ [id]: body.gender }],
+            ":newUserIdItem": { [id]: body.gender },
             ":emptyList": [],
             ":time": Date.now(),
           },
           ConditionExpression:
-            "(attribute_not_exists(id) or NOT contains(#uid, :newUserId))",
+            "(attribute_not_exists(id) or NOT contains(#uid, :newUserIdItem))",
         },
       });
     });
