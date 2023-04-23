@@ -1,60 +1,134 @@
 <script>
   var start = null;
-  const swipeable = document.getElementById("swipeable");
-  const swipeableWidth = swipeable.offsetWidth;
-  const swipeableHeight = swipeable.offsetHeight;
 
-  let touchstartX = 0;
-  let touchstartY = 0;
-  swipeable.addEventListener("touchstart", (event) => {
-    touchstartX = event.changedTouches[0].screenX;
-    touchstartY = event.changedTouches[0].screenY;
-    console.log("touchstart", touchstartX, touchstartY);
-  });
+  const registerSwipable = (swipeable) => {
+    swipeable.style.cursor = "grab";
+    const swipeableWidth = swipeable.offsetWidth;
+    const swipeableHeight = swipeable.offsetHeight;
 
-  swipeable.addEventListener("touchmove", (event) => {
-    let touchX = event.changedTouches[0].screenX - touchstartX;
-    let touchY = event.changedTouches[0].screenY - touchstartY;
-    console.log("touchmove", touchX, touchY);
-    const translateX = Math.min((touchX / swipeableWidth) * 50, 50);
-    const translateY = Math.min((touchY / swipeableHeight) * 50, 50);
-    const rotate = Math.min((touchX / swipeableWidth) * 10, 10);
-    console.log("translateX", translateX);
-    swipeable.style.transition = "transform 0.5s";
-    swipeable.style.transform = `translateX(${translateX}%) translateY(${translateY}%) rotate(${rotate}deg) rotateY(0deg) scale(1)`;
-  });
+    let touchstartX = 0;
+    let touchstartY = 0;
 
-  swipeable.addEventListener("touchend", () => {}, false);
+    const setTouchStart = (x, y) => {
+      touchstartX = x;
+      touchstartY = y;
+    };
+
+    const setTouchMove = (x, y) => {
+      let touchX = x - touchstartX;
+      let touchY = y - touchstartY;
+      console.log("touchmove", touchX, touchY);
+      const translateX = touchX;
+      const translateY = touchY;
+      const rotate = Math.min((touchX / swipeableWidth) * 30, 30);
+      console.log("translateX", translateX);
+      swipeable.style.transition = "transform 0.2s";
+      swipeable.style.transform = `translateX(${translateX}px) translateY(${translateY}px) rotate(${rotate}deg) rotateY(0deg) scale(1)`;
+    };
+
+    const onCancel = (x, y) => {
+      let touchX = x - touchstartX;
+      let touchY = y - touchstartY;
+      if (Math.abs(touchX) > swipeableWidth / 2) {
+        console.log("Swipe Next");
+      } else {
+        swipeable.style.transition = "transform 0.5s";
+        swipeable.style.transform = `translateX(0%) translateY(0%) rotate(0deg) rotateY(0deg) scale(1)`;
+      }
+    };
+
+    swipeable.addEventListener("touchstart", (event) => {
+      setTouchStart(
+        event.changedTouches[0].screenX,
+        event.changedTouches[0].screenY
+      );
+    });
+
+    swipeable.addEventListener("touchmove", (event) => {
+      setTouchMove(
+        event.changedTouches[0].screenX,
+        event.changedTouches[0].screenY
+      );
+    });
+
+    swipeable.addEventListener(
+      "touchend",
+      (event) => {
+        onCancel(
+          event.changedTouches[0].screenX,
+          event.changedTouches[0].screenY
+        );
+      },
+      false
+    );
+
+    let isOnDrag = false;
+
+    swipeable.addEventListener("mousedown", (event) => {
+      isOnDrag = true;
+      setTouchStart(event.screenX, event.screenY);
+    });
+
+    swipeable.addEventListener("mousemove", (event) => {
+      if (!isOnDrag) return;
+      setTouchMove(event.screenX, event.screenY);
+      console.log("drag", event.screenX, event.screenY);
+      event.preventDefault();
+    });
+
+    swipeable.addEventListener("mouseleave", (event) => {
+      isOnDrag = false;
+      onCancel(event.screenX, event.screenY);
+    });
+
+    swipeable.addEventListener("mouseup", (event) => {
+      isOnDrag = false;
+      onCancel(event.screenX, event.screenY);
+    });
+  };
+
+  function* feedList() {
+    //mock feedlist
+    yield [
+      {
+        id: 1,
+        name: "John",
+        age: 20,
+        image: "https://placehold.co/400x600",
+      },
+    ];
+  }
 </script>
-
-<div id="swipeable" style="z-index: 99" class="absolute h-full flex w-full">
-  <div
-    style="
-      flex-grow: 1;
-      background-image: url(https://placehold.co/400x600);
-      background-position: center;
-    "
-    class="my-5 bg-secondary relative"
-  >
-    <div class="absolute bottom-2 w-full flex justify-center gap-4">
-      <img src="/icons/swipe-left.svg" alt="" />
-      <img src="/icons/swipe-right.svg" alt="" />
+<div class="h-full flex relative flex-col">
+  <div id="swipeable" style="z-index: 99" class="absolute h-full flex w-full">
+    <div
+      style="
+        flex-grow: 1;
+        background-image: url(https://placehold.co/400x600);
+        background-position: center;
+      "
+      class="my-5 bg-secondary relative"
+    >
+      <div class="absolute bottom-2 w-full flex justify-center gap-4">
+        <img src="/icons/swipe-left.svg" alt="" />
+        <img src="/icons/swipe-right.svg" alt="" />
+      </div>
     </div>
   </div>
-</div>
 
-<div style="z-index: 98" class="absolute h-full flex w-full">
-  <div
-    style="
-      flex-grow: 1;
-      background-image: url(https://placehold.co/400x600);
-      background-position: center;
-    "
-    class="my-5 bg-secondary relative"
-  >
-    <div class="absolute bottom-2 w-full flex justify-center gap-4">
-      <img src="/icons/swipe-left.svg" alt="" />
-      <img src="/icons/swipe-right.svg" alt="" />
+  <div style="z-index: 98" class="absolute h-full flex w-full">
+    <div
+      style="
+        flex-grow: 1;
+        background-image: url(https://placehold.co/400x600);
+        background-position: center;
+      "
+      class="my-5 bg-secondary relative"
+    >
+      <div class="absolute bottom-2 w-full flex justify-center gap-4">
+        <img src="/icons/swipe-left.svg" alt="" />
+        <img src="/icons/swipe-right.svg" alt="" />
+      </div>
     </div>
   </div>
 </div>

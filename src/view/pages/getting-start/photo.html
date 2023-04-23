@@ -1,28 +1,105 @@
 <script>
-  window.login = () => {
-    window.location.href = "api/auth/login";
+  document.getElementById("getting-start-progress").style = `width: 70%`;
+
+  const imgUpload = document.getElementsByClassName("img-upload");
+  const continueSelector = document.getElementById("continue");
+  const files = Array.from(imgUpload).map(() => null);
+
+  const setFiles = useState("photos", files, [
+    (file) => {
+      if (new Set(file).size > 2) {
+        continueSelector.classList.add("bg-primary");
+        continueSelector.classList.remove("bg-button-secondary");
+        continueSelector.classList.remove("text-secondary-contrast");
+        continueSelector.classList.add("text-white");
+        continueSelector.removeAttribute("disabled");
+      } else {
+        continueSelector.classList.remove("bg-primary");
+        continueSelector.classList.add("bg-button-secondary");
+        continueSelector.classList.add("text-secondary-contrast");
+        continueSelector.classList.remove("text-white");
+        continueSelector.setAttribute("disabled", "true");
+      }
+    },
+  ]);
+
+  const addButton = () => {
+    for (let i = 0; i < imgUpload.length; i++) {
+      const imgUploadSlot = imgUpload[i];
+      if (imgUploadSlot.children.length <= 0) {
+        const imgUploadButton = document.createElement("img");
+        imgUploadButton.setAttribute("src", "/icons/upload-add.svg");
+        imgUploadButton.classList.add("upload-button", "absolute");
+
+        imgUploadButton.addEventListener("click", () => {
+          const input = document.createElement("input");
+          input.setAttribute("type", "file");
+          input.setAttribute("accept", "image/*");
+          input.addEventListener("change", imgUploadHandler(imgUploadSlot, i));
+          input.click();
+        });
+
+        imgUploadSlot.appendChild(imgUploadButton);
+      }
+    }
   };
 
-  document.getElementById("getting-start-progress").style = `width: 70%`;
+  addButton();
+
+  const addDeleteButton = (el, i) => {
+    if (el.children.length <= 0) {
+      const imgUploadButton = document.createElement("img");
+      imgUploadButton.setAttribute("src", "/icons/upload-del.svg");
+      imgUploadButton.classList.add("upload-button", "absolute");
+
+      imgUploadButton.addEventListener("click", () => {
+        el.style = "";
+        el.children[0].remove();
+        files[i] = null;
+        setFiles(files);
+        console.log(files);
+        addButton();
+      });
+
+      el.appendChild(imgUploadButton);
+    }
+  };
+
+  const imgUploadHandler = (imgUploadSlot, i) => {
+    return (e) => {
+      const file = e.target.files[0];
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        files[i] = file;
+        setFiles(files);
+        imgUploadSlot.style = `background-image: url(${e.target.result}); background-position: center; object-fit: contain;`;
+        imgUploadSlot.children[0].remove();
+        addDeleteButton(imgUploadSlot, i);
+      };
+      reader.readAsDataURL(file);
+    };
+  };
 </script>
 
 <div class="text-4xl text-black mt-10 font-bold">Add Photos</div>
 
 <div class="text-secondary mt-3 text-sm">Add at least 2 photos to continue</div>
 <div class="flex w-full gap-4 mt-12">
-  <div class="w-full img-upload rounded-3xl"></div>
-  <div class="w-full img-upload rounded-3xl"></div>
-  <div class="w-full img-upload rounded-3xl"></div>
+  <div class="w-full img-upload rounded-3xl relative"></div>
+  <div class="w-full img-upload rounded-3xl relative"></div>
+  <div class="w-full img-upload rounded-3xl relative"></div>
 </div>
 <div class="flex w-full gap-4 mt-4">
-  <div class="w-full img-upload rounded-3xl"></div>
-  <div class="w-full img-upload rounded-3xl"></div>
-  <div class="w-full img-upload rounded-3xl"></div>
+  <div class="w-full img-upload rounded-3xl relative"></div>
+  <div class="w-full img-upload rounded-3xl relative"></div>
+  <div class="w-full img-upload rounded-3xl relative"></div>
 </div>
 <div class="h-full"></div>
-<div
+<button
+  disabled
+  id="continue"
   onclick="router.push('/getting-start/welcome')"
   class="my-12 text-center font-bold rounded-full bg-button-secondary text-secondary-contrast p-2"
 >
   CONTINUE
-</div>
+</button>

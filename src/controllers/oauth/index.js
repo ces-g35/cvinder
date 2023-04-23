@@ -43,13 +43,14 @@ async function token(req, res) {
   };
 
   const response = await (await fetch(OAUTH_TOKEN_URL, options)).json();
-  // res.json(response);
+  console.log(response);
   req.session.accessToken = response.access_token;
   req.session.refreshToken = response.refresh_token;
   req.session.expiresAt = Date.now() + response.expires_in;
   const profile = await cvClient.getProfile(req.session.accessToken);
+  console.log(profile);
   let is_new = await userRepo.isNewUser(profile.id);
-  res.redirect(`/about?is_new=${is_new}`);
+  res.redirect(`/getting-start/user?is_new=${is_new}`);
 }
 
 /**
