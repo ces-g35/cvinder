@@ -25,6 +25,11 @@ const sessionOptions = {
   },
 };
 
+app.use((req, res, next) => {
+  console.log(`${req.method} ${req.url}`);
+  next();
+});
+
 app.use(
   cors({
     origin: "*",
@@ -38,11 +43,6 @@ const router = express.Router();
 
 app.get("/courseville/access_token", oauthControllers.token);
 app.use("/api", router);
-
-app.use((req, res, next) => {
-  console.log(`${req.method} ${req.url}`);
-  next();
-});
 
 router.use("/auth", routes.authRoute);
 router.use(

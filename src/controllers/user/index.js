@@ -27,19 +27,6 @@ function validateBirthDate(body) {
 /**
  * @param {object} body
  */
-function validateGender(body) {
-  if (!body.gender) {
-    throw new Error("Gender is required");
-  }
-
-  if (body.gender !== "Male" && body.gender !== "Female") {
-    throw new Error("Gender is not correct");
-  }
-}
-
-/**
- * @param {object} body
- */
 function validateInterests(body) {
   if (!body.interests) {
     throw new Error("Interests is required");
@@ -155,33 +142,21 @@ async function createUser(req, res) {
     };
 
     const createdAt = Date.now();
-    const addedUser = {
-      id,
-      gender: body.gender,
-      createdAt,
-    };
-
     courses.forEach(async (course) => {
       transactionCommandInput.TransactItems.push({
-        Update: {
+        Put: {
           TableName: "courses",
-          Key: { id: `${course.cv_cid}` },
-          UpdateExpression:
-            "SET #uid = list_append(if_not_exists(#uid, :emptyList), :newUserId), updatedAt = :time",
-          ExpressionAttributeNames: {
-            "#uid": "uid",
+          Item: {
+            id: uuid(),
+            cv_cid: course.cv_cid,
+            student_id: id,
+            gender: body.gender,
+            createdAt,
           },
-          ExpressionAttributeValues: {
-            ":newUserId": [addedUser],
-            ":newUserIdItem": addedUser,
-            ":emptyList": [],
-            ":time": createdAt,
-          },
-          ConditionExpression:
-            "(attribute_not_exists(id) or NOT contains(#uid, :newUserIdItem))",
         },
       });
     });
+    console.log(JSON.stringify(transactionCommandInput, null, 2));
     await docClient.send(new TransactWriteCommand(transactionCommandInput));
     res.sendStatus(201);
   } catch (err) {
