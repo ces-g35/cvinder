@@ -7,5 +7,6 @@ router.get("/me", userControllers.getProfile);
 router.post("/", userControllers.createUser);
 router.patch("/", userControllers.updateUser);
 router.get("/courses", userControllers.getUserCourses);
+router.get("/feed", userControllers.getFeed);
 
 export default router;

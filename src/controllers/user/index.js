@@ -2,6 +2,7 @@ import cvClient from "../../client/courseville/index.js";
 import { v4 as uuid } from "uuid";
 import { TransactWriteCommand } from "@aws-sdk/lib-dynamodb";
 import { docClient } from "../../utils/db/index.js";
+import feedUtils from "../../utils/feed/index.js";
 
 /**
  * @param {object} body
@@ -122,6 +123,7 @@ async function createUser(req, res) {
     gender: body.gender,
     interests: body.interests,
     prefGender: body.prefGender,
+    lastUpdatedAt: 0,
   };
 
   try {
@@ -147,7 +149,6 @@ async function createUser(req, res) {
         Put: {
           TableName: "courses",
           Item: {
-            id: uuid(),
             cv_cid: course.cv_cid,
             student_id: id,
             gender: body.gender,
@@ -172,9 +173,28 @@ async function getUserCourses(req, res) {
   res.json(courses);
 }
 
+/**
+ * @param {import('express').Request} req
+ * @param {import('express').Response} res
+ */
+async function getFeed(req, res) {
+  const id = req.profile.id;
+  const prefGender = req.profile.prefGender;
+  const accessToken = req.session.accessToken;
+  console.log(req.user);
+  const result = await feedUtils.feedBuilder(
+    id,
+    "Male",
+    accessToken,
+    req.user.lastUpdatedAt
+  );
+  res.json(result);
+}
+
 export default {
   updateUser,
   createUser,
   getProfile,
   getUserCourses,
+  getFeed,
 };

@@ -47,6 +47,7 @@ async function isUserMiddleware(req, res, next) {
     res.status(401).json({ error: "Unauthorized" });
     return;
   }
+  req.user = user.Item;
   next();
 }
 
