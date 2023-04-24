@@ -1,6 +1,25 @@
 <script>
-  console.log(getGlobalState());
+  const state = getGlobalState();
   document.getElementById("getting-start-progress").style = `width: 100%`;
+  console.log(state);
+  const convertTimeStamp = (dateString) => {
+    const [year, month, day] = dateString.split("-");
+    const timestamp = Date.UTC(year, month - 1, day) / 1000;
+    return timestamp;
+  };
+  fetch("/api/user/", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      username: state.username,
+      prefGender: state.prefGender,
+      birthdate: convertTimeStamp(state.birthDate),
+      gender: state.gender,
+      interests: state.interests,
+    }),
+  });
 </script>
 
 <div class="text-center py-12">

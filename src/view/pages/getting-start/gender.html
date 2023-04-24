@@ -1,7 +1,7 @@
 <script>
   document.getElementById(
     "getting-start-progress"
-  ).style = `width: calc(16.67% * 2)`;
+  ).style = `width: calc(14.28% * 2)`;
   const MaleSelector = document.getElementById("Male");
   const FemaleSelector = document.getElementById("Female");
   const continueSelector = document.getElementById("continue");
@@ -38,7 +38,7 @@
     selector.classList.add("text-secondary-contrast");
   };
 
-  const setSex = useState("prefGender", "", [
+  const setSex = useState("gender", "", [
     (sex) => {
       if (sex) enableContinue();
       else disableContinue();
@@ -47,10 +47,10 @@
       disableSelector(FemaleSelector);
 
       switch (sex) {
-        case "MALE":
+        case "Male":
           enableSelector(MaleSelector);
           break;
-        case "FEMALE":
+        case "Female":
           enableSelector(FemaleSelector);
           break;
         default:
@@ -68,14 +68,14 @@
 <div class="text-secondary mt-3 text-sm mb-12">What are you looking for</div>
 <div
   id="Male"
-  onclick="userPage.setSex(s=> s=='MALE' ? '' : 'MALE')"
+  onclick="userPage.setSex(s=> s=='Male' ? '' : 'Male')"
   class="my-3 text-center font-bold rounded-full border-2 border-secondary text-secondary-contrast p-2"
 >
   MALE
 </div>
 <div
   id="Female"
-  onclick="userPage.setSex(s=> s=='FEMALE' ? '' : 'FEMALE')"
+  onclick="userPage.setSex(s=> s=='Female' ? '' : 'Female')"
   class="my-3 text-center font-bold rounded-full border-2 border-secondary text-secondary-contrast p-2"
 >
   FEMALE

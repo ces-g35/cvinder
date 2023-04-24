@@ -6,7 +6,7 @@
     router.push("/user/swipe");
   }
 
-  document.getElementById("getting-start-progress").style = `width: 16.67%`;
+  document.getElementById("getting-start-progress").style = `width: 14.28%`;
   const MaleSelector = document.getElementById("Male");
   const FemaleSelector = document.getElementById("Female");
   const continueSelector = document.getElementById("continue");
@@ -52,10 +52,10 @@
       disableSelector(FemaleSelector);
 
       switch (sex) {
-        case "MALE":
+        case "Male":
           enableSelector(MaleSelector);
           break;
-        case "FEMALE":
+        case "Female":
           enableSelector(FemaleSelector);
           break;
         default:
@@ -73,14 +73,14 @@
 <div class="text-secondary mt-3 text-sm mb-12">What is your gender</div>
 <div
   id="Male"
-  onclick="genderPage.setSex(s=> s=='MALE' ? '' : 'MALE')"
+  onclick="genderPage.setSex(s=> s=='Male' ? '' : 'Male')"
   class="my-3 text-center font-bold rounded-full border-2 border-secondary text-secondary-contrast p-2"
 >
   MALE
 </div>
 <div
   id="Female"
-  onclick="genderPage.setSex(s=> s=='FEMALE' ? '' : 'FEMALE')"
+  onclick="genderPage.setSex(s=> s=='Female' ? '' : 'Female')"
   class="my-3 text-center font-bold rounded-full border-2 border-secondary text-secondary-contrast p-2"
 >
   FEMALE
