@@ -1,4 +1,6 @@
 <script>
+  useGuard();
+
   var start = null;
 
   const registerSwipable = (swipeable) => {
@@ -98,6 +100,8 @@
       },
     ];
   }
+
+  registerSwipable(document.getElementById("swipeable"));
 </script>
 <div class="h-full flex relative flex-col">
   <div id="swipeable" style="z-index: 99" class="absolute h-full flex w-full">

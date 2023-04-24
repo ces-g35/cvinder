@@ -25,6 +25,7 @@ button:active {
 input {
   outline: none;
   border: none;
+  font-family: "Inter", sans-serif;
 }
 
 html {
@@ -1159,4 +1160,14 @@ body {
 
 .overflow-hidden {
   overflow: hidden;
+}
+
+.profile-image {
+  width: 10rem;
+  height: 10rem;
+}
+
+.border-4 {
+  border-width: 4px;
+  border-style: solid;
 }

@@ -43,7 +43,6 @@ async function token(req, res) {
   };
 
   const response = await (await fetch(OAUTH_TOKEN_URL, options)).json();
-  console.log(response);
   req.session.accessToken = response.access_token;
   req.session.refreshToken = response.refresh_token;
   req.session.expiresAt = Date.now() + response.expires_in;

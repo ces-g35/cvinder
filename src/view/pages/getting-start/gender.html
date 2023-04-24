@@ -1,12 +1,7 @@
 <script>
-  const { is_new } = useQuery();
-  console.log(is_new);
-
-  if (is_new === "false") {
-    router.push("/user/swipe");
-  }
-
-  document.getElementById("getting-start-progress").style = `width: 14.28%`;
+  document.getElementById(
+    "getting-start-progress"
+  ).style = `width: calc(14.28% * 2)`;
   const MaleSelector = document.getElementById("Male");
   const FemaleSelector = document.getElementById("Female");
   const continueSelector = document.getElementById("continue");
@@ -43,7 +38,7 @@
     selector.classList.add("text-secondary-contrast");
   };
 
-  const setSex = useState("prefGender", "", [
+  const setSex = useState("gender", "", [
     (sex) => {
       if (sex) enableContinue();
       else disableContinue();
@@ -64,23 +59,23 @@
       }
     },
   ]);
-  window.genderPage = {
+  window.userPage = {
     setSex,
   };
 </script>
 
-<div class="text-4xl text-black mt-10 font-bold">I'm a</div>
-<div class="text-secondary mt-3 text-sm mb-12">What is your gender</div>
+<div class="text-4xl text-black mt-10 font-bold">I'm looking for</div>
+<div class="text-secondary mt-3 text-sm mb-12">What are you looking for</div>
 <div
   id="Male"
-  onclick="genderPage.setSex(s=> s=='Male' ? '' : 'Male')"
+  onclick="userPage.setSex(s=> s=='Male' ? '' : 'Male')"
   class="my-3 text-center font-bold rounded-full border-2 border-secondary text-secondary-contrast p-2"
 >
   MALE
 </div>
 <div
   id="Female"
-  onclick="genderPage.setSex(s=> s=='Female' ? '' : 'Female')"
+  onclick="userPage.setSex(s=> s=='Female' ? '' : 'Female')"
   class="my-3 text-center font-bold rounded-full border-2 border-secondary text-secondary-contrast p-2"
 >
   FEMALE
@@ -89,7 +84,7 @@
 <button
   id="continue"
   disabled="true"
-  onclick="router.push('/getting-start/gender')"
+  onclick="router.push('/getting-start/username')"
   class="my-12 text-center font-bold rounded-full bg-button-secondary text-secondary-contrast p-2"
 >
   CONTINUE

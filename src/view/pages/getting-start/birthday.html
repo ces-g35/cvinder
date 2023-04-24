@@ -1,0 +1,51 @@
+<script>
+  document.getElementById(
+    "getting-start-progress"
+  ).style = `width: calc(14.28% * 4)`;
+
+  const continueSelector = document.getElementById("continue");
+  const dateInput = document.querySelector("input");
+
+  const setBirthDate = useState("birthDate", "", [
+    (birthDate) => {
+      console.log("birthDate", birthDate);
+      if (birthDate.length > 0) {
+        continueSelector.classList.add("bg-primary");
+        continueSelector.classList.remove("bg-button-secondary");
+        continueSelector.classList.remove("text-secondary-contrast");
+        continueSelector.classList.add("text-white");
+        continueSelector.removeAttribute("disabled");
+      } else {
+        continueSelector.classList.remove("bg-primary");
+        continueSelector.classList.add("bg-button-secondary");
+        continueSelector.classList.add("text-secondary-contrast");
+        continueSelector.classList.remove("text-white");
+        continueSelector.setAttribute("disabled", "true");
+      }
+    },
+  ]);
+
+  dateInput.addEventListener("input", (e) => {
+    setBirthDate(e.target.value);
+  });
+</script>
+
+<div class="text-4xl text-black mt-10 font-bold">Birthday</div>
+
+<div class="text-secondary mt-3 text-sm">What is your birthday</div>
+<div class="my-4">
+  <input
+    type="date"
+    placeholder="DD/MM/YYYY"
+    class="w-full border-b-2 text-lg py-2 bg-transparent border-secondary"
+  />
+</div>
+<div class="h-full"></div>
+<button
+  disabled
+  id="continue"
+  onclick="router.push('/getting-start/interest')"
+  class="my-12 text-center font-bold rounded-full bg-button-secondary text-secondary-contrast p-2"
+>
+  CONTINUE
+</button>

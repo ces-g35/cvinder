@@ -1,5 +1,7 @@
 <script>
-  document.getElementById("getting-start-progress").style = `width: 40%`;
+  document.getElementById(
+    "getting-start-progress"
+  ).style = `width: calc(14.28% * 5)`;
   const interestsOptions = [
     "Movies",
     "Netflix",
@@ -17,7 +19,7 @@
   const continueSelector = document.getElementById("continue");
 
   const setInterest = useState(
-    "interest",
+    "interests",
     [],
     [
       (interest) => {

@@ -1,3 +1,29 @@
+const COOKIE_TTL = 1209600;
+window.useGuard = () => {
+  const IS_LOGGEDIN = localStorage.getItem("CVINDER_IS_LOGGEDIN");
+  if (IS_LOGGEDIN) {
+    const { expiresAt } = JSON.parse(IS_LOGGEDIN);
+    if (expiresAt < Date.now()) {
+      localStorage.removeItem("CVINDER_IS_LOGGEDIN");
+      window.location.href = "/";
+      return;
+    }
+  }
+  fetch("/api/user/me").then((res) => {
+    if (res.status !== 401) {
+      localStorage.setItem(
+        "CVINDER_IS_LOGGEDIN",
+        JSON.stringify({
+          expiresAt: Date.now() + COOKIE_TTL,
+        })
+      );
+    } else {
+      localStorage.removeItem("CVINDER_IS_LOGGEDIN");
+      window.location.href = "/";
+    }
+  });
+};
+
 window.useQuery = () => {
   const query = new URLSearchParams(window.location.search);
   const params = {};
@@ -5,6 +31,20 @@ window.useQuery = () => {
     params[key] = value;
   }
   return params;
+};
+
+window.useParam = () => {
+  const path = window.location.pathname.split("?")[0];
+  const filePath = window.globalTree.match(path);
+  const pats = filePath
+    .replace("./pages", "")
+    .replace(".js", "")
+    .replace(".", "\\.")
+    .replaceAll("/", "\\/")
+    .replaceAll(/\[(\w*)\]/g, "(?<$1>[\\w]*)");
+  const pattern = new RegExp(pats, "g");
+
+  return pattern.exec(path).groups;
 };
 
 let globalState = {};
@@ -27,7 +67,8 @@ window.useState = (key, initialState, listener = []) => {
       key && (globalState[key] = state);
       return;
     }
-    key && (globalState[key] = state);
+    state = newState;
+    key && (globalState[key] = newState);
     listener.forEach((l) => l(newState));
   };
   return updateState;
