@@ -1,5 +1,9 @@
 import cvClient from "../../client/courseville/index.js";
-import { ExecuteStatementCommand, UpdateCommand } from "@aws-sdk/lib-dynamodb";
+import {
+  ExecuteStatementCommand,
+  GetCommand,
+  UpdateCommand,
+} from "@aws-sdk/lib-dynamodb";
 import { docClient } from "../../utils/db/index.js";
 
 /**
@@ -36,20 +40,30 @@ async function feedBuilder(uid, prefGender, accessToken, lastUpdated) {
   items.forEach((item) => s.add(item.student_id));
 
   /** @type {import('@aws-sdk/lib-dynamodb').UpdateCommandInput} */
+  if (s.size !== 0) {
+    const param = {
+      TableName: "user-feed",
+      Key: {
+        uid,
+      },
+      UpdateExpression:
+        "SET feed = list_append(if_not_exists(feed, :emptyList), :newUser)",
+      ExpressionAttributeValues: {
+        ":newUser": [...s],
+        ":emptyList": [],
+      },
+    };
+    await docClient.send(new UpdateCommand(param));
+  }
+
   const param = {
     TableName: "user-feed",
     Key: {
       uid,
     },
-    UpdateExpression:
-      "SET feed = list_append(if_not_exists(feed, :emptyList), :newUser)",
-    ExpressionAttributeValues: {
-      ":newUser": [...s],
-      ":emptyList": [],
-    },
   };
-  await docClient.send(new UpdateCommand(param));
-  return s;
+
+  return (await docClient.send(new GetCommand(param))).Item;
 }
 
 export default {
