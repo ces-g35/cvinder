@@ -3,19 +3,21 @@
   document.getElementById("getting-start-progress").style = `width: 100%`;
   console.log(state);
   const convertTimeStamp = (dateString) => {
-    const [day, month, year] = dateString.split("-");
+    const [year, month, day] = dateString.split("-");
     const timestamp = Date.UTC(year, month - 1, day) / 1000;
     return timestamp;
   };
-  const { photos, birthdate, body } = state;
   fetch("/api/user/", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      ...state,
-      birthdate: convertTimeStamp(birthdate),
+      username: state.username,
+      prefGender: state.prefGender,
+      birthdate: convertTimeStamp(state.birthDate),
+      gender: state.gender,
+      interests: state.interests,
     }),
   });
 </script>
