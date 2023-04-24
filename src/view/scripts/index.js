@@ -53,7 +53,8 @@ window.useState = (key, initialState, listener = []) => {
       key && (globalState[key] = state);
       return;
     }
-    key && (globalState[key] = state);
+    state = newState;
+    key && (globalState[key] = newState);
     listener.forEach((l) => l(newState));
   };
   return updateState;
