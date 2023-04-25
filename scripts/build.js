@@ -138,7 +138,7 @@ function walkAndGenerate(dir, parent = [dir]) {
   }
 }
 
-export const buildDev = () => {
+export const buildDev = ({ debug }) => {
   fs.rmSync(distPath, { recursive: true, force: true });
   fs.mkdirSync(distPath);
   fs.cpSync(path.join(__dirname, "./distTemplate"), distPath, {
@@ -166,10 +166,11 @@ export const buildDev = () => {
     `export default ${JSON.stringify(route)};`
   );
 
-  fs.writeFileSync(
-    path.join(distPath, "index.html"),
-    fs
-      .readFileSync(path.join(distPath, "index.html"), "utf8")
-      .replace("</html>", `${hotReloadScript}</html>`)
-  );
+  let fileContent = fs.readFileSync(path.join(distPath, "index.html"), "utf8");
+
+  if (debug) {
+    fileContent = fileContent.replace("</html>", `${hotReloadScript}</html>`);
+  }
+
+  fs.writeFileSync(path.join(distPath, "index.html"), fileContent);
 };

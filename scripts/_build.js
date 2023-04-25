@@ -1,3 +1,5 @@
 import { buildDev } from "./build.js";
 
-buildDev();
+buildDev({
+  debug: false,
+});
