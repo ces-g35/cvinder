@@ -141,7 +141,6 @@ const pathRouter = async () => {
   // for debuging
   // showTree(window.globalTree);
 
-  console.log(path, route);
   if (filePath) {
     const page = await import(filePath);
     render(rootElement, page);
