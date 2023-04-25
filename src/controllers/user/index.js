@@ -217,6 +217,16 @@ async function makeSwipe(req, res) {
   }
 }
 
+async function getMathesUser(req, res) {
+  const uid = req.profile.id;
+  try {
+    res.json(await feedUtils.getMatches(uid));
+  } catch (error) {
+    console.log(error);
+    res.status(400).json({ error: "something went wrong" });
+  }
+}
+
 export default {
   updateUser,
   createUser,
@@ -224,4 +234,5 @@ export default {
   getUserCourses,
   getFeed,
   makeSwipe,
+  getMathesUser,
 };

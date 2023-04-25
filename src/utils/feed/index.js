@@ -110,8 +110,21 @@ async function makeStatus(uid, id, status) {
   await docClient.send(new UpdateCommand(updateParam));
 }
 
+async function getMatches(uid) {
+  /**@type {import('@aws-sdk/lib-dynamodb').ExecuteStatementCommandInput} */
+  const param = {
+    TableName: "user-feed",
+    Statement:
+      "SELECT * FROM \"user-feed\" WHERE uid = ? AND status = 'Matched'",
+    Parameters: [uid],
+  };
+
+  return (await docClient.send(new ExecuteStatementCommand(param))).Items;
+}
+
 export default {
   feedBuilder,
   isMatchAndMarkMatched,
   makeStatus,
+  getMatches,
 };
