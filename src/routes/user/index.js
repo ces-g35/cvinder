@@ -8,5 +8,6 @@ router.post("/", userControllers.createUser);
 router.patch("/", userControllers.updateUser);
 router.get("/courses", userControllers.getUserCourses);
 router.get("/feed", userControllers.getFeed);
+router.post("/swipe", userControllers.makeSwipe);
 
 export default router;

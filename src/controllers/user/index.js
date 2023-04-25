@@ -184,11 +184,37 @@ async function getFeed(req, res) {
   console.log(req.user);
   const result = await feedUtils.feedBuilder(
     id,
-    "Male",
+    req.user.prefGender,
     accessToken,
     req.user.lastUpdatedAt
   );
   res.json(result);
+}
+
+/**
+ * @param {import('express').Request} req
+ * @param {import('express').Response} res
+ */
+async function makeSwipe(req, res) {
+  const uid = req.profile.id;
+  const { id, status } = req.body;
+
+  try {
+    await feedUtils.makeStatus(uid, id, status);
+    if (status !== "Match") {
+      res.sendStatus(200);
+      return;
+    }
+    const isMatched = await feedUtils.isMatchAndMarkMatched(uid, id);
+    if (!isMatched) {
+      res.sendStatus(200);
+      return;
+    }
+    await feedUtils.makeStatus(id, uid, status);
+  } catch (error) {
+    console.log(error);
+    res.status(400).json({ error: "something went wrong" });
+  }
 }
 
 export default {
@@ -197,4 +223,5 @@ export default {
   getProfile,
   getUserCourses,
   getFeed,
+  makeSwipe,
 };
