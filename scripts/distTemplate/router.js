@@ -64,6 +64,11 @@ function createBranch(node, routes, filePath) {
       }
       current = current.default;
     } else if (route == "index" && idx == routes.length - 1) {
+      // before careful about name collision for example.
+      // /pages
+      //  /about.html
+      //  /about
+      //    index.html
       current.setFile(filePath);
       isIndex = true;
     } else {
