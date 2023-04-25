@@ -52,7 +52,10 @@ function createTree(obj) {
 
 function createBranch(node, routes, filePath) {
   let current = node;
-  routes.forEach((route) => {
+
+  let isIndex = false;
+
+  routes.forEach((route, idx) => {
     const dynamic = /^\[.*\](?:.js)?$/.test(route);
 
     if (dynamic) {
@@ -60,6 +63,9 @@ function createBranch(node, routes, filePath) {
         current.addDefault();
       }
       current = current.default;
+    } else if (route == "index" && idx == routes.length - 1) {
+      current.setFile(filePath);
+      isIndex = true;
     } else {
       if (!(route in current.nodes)) {
         current.addDir(route);
@@ -67,7 +73,38 @@ function createBranch(node, routes, filePath) {
       current = current.nodes[route];
     }
   });
-  current.setFile(filePath);
+  if (!isIndex) {
+    current.setFile(filePath);
+  }
+}
+
+/**
+ *
+ * @param {Node} tree
+ * @param {number} indentLevel
+ */
+function showTree(tree, indentLevel = 0) {
+  function print(msg) {
+    console.log("  ".repeat(indentLevel) + msg);
+  }
+
+  Object.entries(tree.nodes).forEach(([k, v]) => {
+    let content = k;
+    if (v.filePath) {
+      content += ": " + v.filePath;
+    }
+    print(content);
+    showTree(v, indentLevel + 1);
+  });
+
+  if (tree.default) {
+    let content = "[wildcard]";
+    if (tree.default.filePath) {
+      content += ": " + tree.default.filePath;
+    }
+    print(content);
+    showTree(tree.default, indentLevel + 1);
+  }
 }
 
 const rootElement = document.getElementById("root");
@@ -90,9 +127,16 @@ const router = {
 window.router = router;
 
 const pathRouter = async () => {
-  const path = window.location.pathname.split("?")[0];
+  // For consistancy
+  // url:3000 location should be "" instead of "/"
+  const location = window.location.pathname.split("?")[0];
+  const path = location == "/" ? "" : location;
   window.globalTree = createTree(route);
   const filePath = window.globalTree.match(path);
+  // for debuging
+  // showTree(window.globalTree);
+
+  console.log(path, route);
   if (filePath) {
     const page = await import(filePath);
     render(rootElement, page);
