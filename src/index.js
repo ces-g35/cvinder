@@ -51,7 +51,12 @@ router.use(
   middlewares.authMiddleware.isUserMiddleware,
   routes.chatRoute
 );
-router.use("/match", routes.matchRoute);
+router.use(
+  "/match",
+  middlewares.authMiddleware.authMiddleware,
+  middlewares.authMiddleware.isUserMiddleware,
+  routes.matchRoute
+);
 router.use(
   "/user",
   middlewares.authMiddleware.authMiddleware,

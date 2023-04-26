@@ -6,6 +6,7 @@
  * @property {Id} user_id
  * @property {Id} recipient_id
  * @property {Id} author
+ * @property {string} recipient_name
  * @property {string} message
  * @property {boolean} seen
  */

@@ -2,7 +2,7 @@ import db from "../../utils/db/index.js";
 
 /**
  * @param {Id} userId
- * @return {Promise<RecentChat>}
+ * @return {Promise<Array<RecentChat>>}
  */
 
 export async function getRecentChats(userId) {

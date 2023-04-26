@@ -35,6 +35,8 @@
     fetchHistory();
     scrollToBottom();
 
+    fetchUser();
+
     const es = new EventSource("/api/chat/subscribe", { withCredentials: true })
 
     es.addEventListener("_message", (event) => {
@@ -98,7 +100,6 @@
 
     const message = {
       payload: messagePayload,
-      author: "", // TODO: userId
       created_date: Date.now(),
       seen: false,
     };
@@ -152,6 +153,17 @@
     document.getElementById("conversation").scrollBy(0, 10000000);
   }
 
+  function fetchUser() {
+    // TODO: fetch user from api
+    const user = {
+      img_url: "/icons/user-bottom.svg",
+      username: "name: " + to,
+    }
+
+    document.getElementById("user-image").innerText = user.img_url;
+    document.getElementById("user-name").innerText = user.username;
+  }
+
   document.getElementById("conversation").addEventListener("scroll", (e) => {
     if (e.target.scrollTop == 0 && lastKey) {
       fetchHistory()
@@ -178,12 +190,22 @@
   .sending {
     background-color: green;
   }
+
+  .user-portrait {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
 </style>
 
 <div class="h-full flex flex-col py-4">
   <div class="flex flex-col gap-2" id="control-panel">
-    <div id="recipient">
-      <!-- TODO: add recipient div -->
+    <div id="recipient" class="my-4 flex justify-center">
+      <div class="flex flex-col items-center">
+        <img src="/icons/user-bottom.svg" class="user-portrait" id="user-image">
+        <h5 class="my-1 text-center" id="user-name">ggg</h5>
+      </div>
     </div>
   </div>
   <div class="flex-grow overflow-y-scroll" id="conversation">

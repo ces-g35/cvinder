@@ -12,6 +12,11 @@ import {
   putRecentChatByMessageId,
 } from "../../repositories/chat/index.js";
 
+import {
+  deleteMatchById,
+  getMatchByUserPair,
+} from "../../repositories/match/index.js";
+
 import { docClient } from "../../utils/db/index.js";
 
 import { TransactWriteCommand } from "@aws-sdk/lib-dynamodb";
@@ -32,8 +37,15 @@ async function getChats(req, res) {
   const items = await getRecentChats(userId);
 
   // TODO: map user_id to user
+  const ret = items.map((item) => {
+    return {
+      recipient_name: "name: " + item.recipient_id,
+      img_url: "/icons/user-bottom.svg",
+      ...item,
+    };
+  });
 
-  res.json(items);
+  res.json(ret);
 }
 
 /**
@@ -167,6 +179,13 @@ async function postChat(req, res) {
         userId,
         payload
       );
+
+      // remove from match
+      getMatchByUserPair(partitionKey).then((match) => {
+        if (match) {
+          deleteMatchById(match.id);
+        }
+      });
     }
 
     const recentChatRecipient = items.find(

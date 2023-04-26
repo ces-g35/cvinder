@@ -1,22 +1,25 @@
+import { getMatchesByUserId } from "../../repositories/match/index.js";
+
 /**
  * Controller for get matches route
  * @param {import("express").Request} req
  * @param {import("express").Response} res
  */
 async function getMatches(req, res) {
-  res.status(405).json({
-    message: "Yang mai implement kub",
+  const userId = req.profile.id;
+
+  const matches = await getMatchesByUserId(userId);
+
+  // TODO: add correct name and img url
+  const ret = matches.map((match) => {
+    return {
+      img_url: "/icons/user-bottom.svg",
+      target_name: "name: " + match.target_id,
+      ...match,
+    };
   });
+
+  res.json(ret);
 }
 
-/**
- * @param {import("express").Request} req
- * @param {import("express").Response} res
- */
-async function postMatch(req, res) {
-  res.status(405).json({
-    message: "Yang mai implement kub",
-  });
-}
-
-export default { postMatch, getMatches };
+export default { getMatches };
