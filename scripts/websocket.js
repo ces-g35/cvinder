@@ -125,6 +125,11 @@ class WebSocketServer extends EventEmitter {
         )
       );
 
+      socket.on("close", (buffer) => {
+        this.clients.delete(socket);
+        socket.destroy();
+      });
+
       this.on("close", () => {
         this.clients.delete(socket);
         socket.destroy();
