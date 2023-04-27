@@ -74,7 +74,7 @@
       reader.onload = (e) => {
         files[i] = file;
         setFiles(files);
-        imgUploadSlot.style = `background-image: url(${e.target.result}); background-position: center; object-fit: contain;`;
+        imgUploadSlot.style = `background-image: url(${e.target.result}); background-position: center; background-size: cover;`;
         imgUploadSlot.children[0].remove();
         addDeleteButton(imgUploadSlot, i);
       };
