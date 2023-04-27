@@ -34,7 +34,7 @@ async function feedBuilder(uid, prefGender, accessToken, lastUpdated) {
   ])[0];
 
   /** @type {{id: string, student_id: string}[]} */
-  const items = result.Responses[0].Item;
+  const items = result.Item;
   if (items === undefined) return [];
 
   /** @type {Set<string>} */
