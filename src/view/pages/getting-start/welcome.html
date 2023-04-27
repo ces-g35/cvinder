@@ -7,19 +7,76 @@
     const timestamp = Date.UTC(year, month - 1, day) / 1000;
     return timestamp;
   };
-  fetch("/api/user/", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      username: state.username,
-      prefGender: state.prefGender,
-      birthdate: convertTimeStamp(state.birthDate),
-      gender: state.gender,
-      interests: state.interests,
-    }),
-  });
+
+  const convertToBase64 = (file) =>
+    new Promise((resolve, reject) => {
+      const fileReader = new FileReader();
+      fileReader.readAsDataURL(file);
+
+      fileReader.onload = () => {
+        resolve(fileReader.result);
+      };
+
+      fileReader.onerror = (error) => {
+        reject(error);
+      };
+    });
+
+  // fetch("/api/user/image/aa")
+  //   .then((r) => r.json())
+  //   .then(console.log);
+
+  (async () => {
+    const photoKeys = [];
+    for (const base64File of await Promise.all(
+      state.photos.filter((p) => p).map((p) => convertToBase64(p))
+    )) {
+      console.log(base64File);
+      const { key } = await (
+        await fetch("/api/user/upload", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ base64File }),
+        })
+      ).json();
+      photoKeys.push(key);
+    }
+    fetch("/api/user/", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        photos: photoKeys,
+        username: state.username,
+        prefGender: state.prefGender,
+        birthdate: convertTimeStamp(state.birthDate),
+        gender: state.gender,
+        interests: state.interests,
+      }),
+    });
+  })();
+
+  // (async () =>
+  //   fetch("/api/user/", {
+  //     method: "POST",
+  //     headers: {
+  //       "Content-Type": "application/json",
+  //     },
+  //     body: JSON.stringify({
+  //       photos: await Promise.all(
+  //         state.photos.filter((p) => p).map((p) => convertToBase64(p))
+  //       ),
+  //       username: state.username,
+  //       prefGender: state.prefGender,
+  //       birthdate: convertTimeStamp(state.birthDate),
+  //       gender: state.gender,
+  //       interests: state.interests,
+  //     }),
+  //   }))();
+  console.log(state);
 </script>
 
 <div class="text-center py-12">
