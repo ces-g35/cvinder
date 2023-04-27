@@ -2,6 +2,7 @@ import cvClient from "../../client/courseville/index.js";
 import {
   ExecuteStatementCommand,
   TransactWriteCommand,
+  UpdateCommand,
 } from "@aws-sdk/lib-dynamodb";
 import { docClient } from "../../utils/db/index.js";
 import { ExecuteTransactionCommand } from "@aws-sdk/client-dynamodb";
