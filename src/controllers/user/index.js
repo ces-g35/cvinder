@@ -2,7 +2,7 @@ import cvClient from "../../client/courseville/index.js";
 import { v4 as uuid } from "uuid";
 import { TransactWriteCommand } from "@aws-sdk/lib-dynamodb";
 import { docClient } from "../../utils/db/index.js";
-import feedUtils from "../../utils/feed/index.js";
+import feedRepo from "../../repositories/feed/index.js";
 
 /**
  * @param {object} body
@@ -182,7 +182,7 @@ async function getFeed(req, res) {
   const prefGender = req.profile.prefGender;
   const accessToken = req.session.accessToken;
   console.log(req.user);
-  const result = await feedUtils.feedBuilder(
+  const result = await feedRepo.feedBuilder(
     id,
     req.user.prefGender,
     accessToken,
@@ -200,17 +200,17 @@ async function makeSwipe(req, res) {
   const { id, status } = req.body;
 
   try {
-    await feedUtils.makeStatus(uid, id, status);
+    await feedRepo.makeStatus(uid, id, status);
     if (status !== "Match") {
       res.sendStatus(200);
       return;
     }
-    const isMatched = await feedUtils.isMatchAndMarkMatched(uid, id);
+    const isMatched = await feedRepo.isMatchAndMarkMatched(uid, id);
     if (!isMatched) {
       res.sendStatus(200);
       return;
     }
-    await feedUtils.makeStatus(id, uid, status);
+    await feedRepo.makeStatus(id, uid, status);
   } catch (error) {
     console.log(error);
     res.status(400).json({ error: "something went wrong" });
@@ -220,7 +220,7 @@ async function makeSwipe(req, res) {
 async function getMathesUser(req, res) {
   const uid = req.profile.id;
   try {
-    res.json(await feedUtils.getMatches(uid));
+    res.json(await feedRepo.getMatches(uid));
   } catch (error) {
     console.log(error);
     res.status(400).json({ error: "something went wrong" });

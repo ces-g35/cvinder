@@ -1,5 +1,8 @@
 import { v4 as uuid } from "uuid";
-import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
+import {
+  DynamoDBClient,
+  ExecuteStatementCommand,
+} from "@aws-sdk/client-dynamodb";
 import {
   PutCommand,
   DeleteCommand,
@@ -92,4 +95,5 @@ export default {
   addItem,
   deleteItem,
   updateItem,
+  executeStatement,
 };
