@@ -95,5 +95,4 @@ export default {
   addItem,
   deleteItem,
   updateItem,
-  executeStatement,
 };
