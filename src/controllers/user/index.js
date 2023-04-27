@@ -2,7 +2,14 @@ import cvClient from "../../client/courseville/index.js";
 import { v4 as uuid } from "uuid";
 import { TransactWriteCommand } from "@aws-sdk/lib-dynamodb";
 import { docClient } from "../../utils/db/index.js";
+import path from "path";
+import { promises as fs, existsSync } from "fs";
 import feedRepo from "../../repositories/feed/index.js";
+
+const imageStorage = path.join(process.cwd(), "images");
+if (!existsSync(imageStorage)) {
+  fs.mkdir(imageStorage);
+}
 
 /**
  * @param {object} body
@@ -55,6 +62,19 @@ function validateGender(body) {
   }
 }
 
+/**
+ * @param {object} body
+ */
+function validatePhotos(body) {
+  if (!body.photos) {
+    throw new Error("Photos is required");
+  }
+
+  if (body.photos.length < 2) {
+    throw new Error("Photos is need to be more than 1");
+  }
+}
+
 async function updateUser(req, res) {
   const body = req.body;
   const id = req.profile.id;
@@ -97,6 +117,20 @@ async function getProfile(req, res) {
 }
 
 /**
+ * @param {string[]} photos
+ */
+async function saveImage(photos) {
+  const imageDir = path.join(process.cwd(), "images");
+  return Promise.all(
+    photos.map((photo) => {
+      const key = uuid();
+      const filePath = path.join(imageDir, key);
+      fs.writeFile(filePath, photo, "base64");
+    })
+  );
+}
+
+/**
  * @param {import('express').Request} req
  * @param {import('express').Response} res
  */
@@ -110,6 +144,7 @@ async function createUser(req, res) {
     validateGender(body);
     validateInterests(body);
     validateGender(body);
+    validatePhotos(body);
   } catch (err) {
     res.status(400).json({ error: err.message });
     return;
@@ -118,6 +153,7 @@ async function createUser(req, res) {
   const id = req.profile.id;
   const newUser = {
     id,
+    photos: body.photos,
     username: body.username,
     birthdate: body.birthdate,
     gender: body.gender,
@@ -191,6 +227,27 @@ async function getFeed(req, res) {
   res.json(result);
 }
 
+async function uploadFile(req, res) {
+  console.log(req.body);
+  const key = uuid();
+  const filePath = path.join(imageStorage, key);
+  fs.writeFile(filePath, req.body.base64File, "utf-8");
+  res.json({ key });
+}
+
+async function getFile(req, res) {
+  console.log(req.params.key);
+  const filePath = path.join(imageStorage, req.params.key);
+  try {
+    const file = await fs.readFile(filePath);
+    res.json({ file: file.toString("utf-8") });
+  } catch (error) {
+    res.status(404).send({
+      file: "File not found",
+    });
+  }
+}
+
 /**
  * @param {import('express').Request} req
  * @param {import('express').Response} res
@@ -233,6 +290,8 @@ export default {
   getProfile,
   getUserCourses,
   getFeed,
+  uploadFile,
+  getFile,
   makeSwipe,
   getMathesUser,
 };
