@@ -1,4 +1,5 @@
 import client from "../../client/courseville/index.js";
+import userRepo from "../../repositories/user/index.js";
 import db from "../../utils/db/index.js";
 /**
  * @param {import('express').Request} req
@@ -42,7 +43,7 @@ async function isUserMiddleware(req, res, next) {
   }
 
   const id = req.profile.id;
-  const user = await db.getItem("user", { id });
+  const user = await userRepo.getUser(id);
   if (!user.Item) {
     res.status(401).json({ error: "Unauthorized" });
     return;

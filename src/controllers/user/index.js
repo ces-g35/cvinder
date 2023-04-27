@@ -5,6 +5,7 @@ import { docClient } from "../../utils/db/index.js";
 import path from "path";
 import { promises as fs, existsSync } from "fs";
 import feedRepo from "../../repositories/feed/index.js";
+import userRepo from "../../repositories/user/index.js";
 
 const imageStorage = path.join(process.cwd(), "images");
 if (!existsSync(imageStorage)) {
@@ -223,7 +224,13 @@ async function getFeed(req, res) {
     accessToken,
     req.user.lastUpdatedAt
   );
-  res.json(result);
+  const withUser = await Promise.all(
+    result.map(async (item) => ({
+      id: item.id,
+      user: await userRepo.getUser(item.id),
+    }))
+  );
+  res.json(withUser);
 }
 
 async function uploadFile(req, res) {

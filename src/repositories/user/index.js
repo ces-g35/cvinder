@@ -6,6 +6,14 @@ async function isNewUser(id) {
   return !user;
 }
 
+/**
+ * @param {string} id
+ */
+function getUser(id) {
+  return db.getItem("user", { id });
+}
+
 export default {
   isNewUser,
+  getUser,
 };
