@@ -110,6 +110,7 @@ async function makeStatus(uid, id, status) {
     ExpressionAttributeValues: {
       ":status": status,
     },
+    ConditionExpression: "attribute_exists(uid) AND attribute_exists(id)",
   };
   await docClient.send(new UpdateCommand(updateParam));
 }
