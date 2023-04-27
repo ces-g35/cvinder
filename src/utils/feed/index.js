@@ -1,71 +1,20 @@
-import cvClient from "../../client/courseville/index.js";
-import {
-  ExecuteStatementCommand,
-  GetCommand,
-  UpdateCommand,
-} from "@aws-sdk/lib-dynamodb";
-import { docClient } from "../../utils/db/index.js";
-
 /**
+ * @param {{cv_cid:number, course_no: string, year:string, semester: number, section: string, role: string}[]} courses
  * @param {string} uid
+ * @param {Date} lastUpdated
  * @param {string} prefGender
- * @param {string} accessToken
- *@param {Date} lastUpdated
+ * @returns {import('@aws-sdk/lib-dynamodb').ExecuteStatementCommandInput}
  */
-async function feedBuilder(uid, prefGender, accessToken, lastUpdated) {
-  const courses = await cvClient.getCourses(accessToken);
-  /** @type {import('@aws-sdk/lib-dynamodb').ExecuteStatementCommandInput} */
-  const statement = {
+export function buildSearchNewUserFromUpdatedCourse(
+  courses,
+  uid,
+  lastUpdated,
+  prefGender
+) {
+  return {
     Statement: `SELECT * FROM courses  WHERE cv_cid IN [${courses
       .map(() => "?")
       .join(",")}] AND NOT student_id = ? AND createdAt > ? AND gender = ?`,
     Parameters: [...courses.map((c) => c.cv_cid), uid, lastUpdated, prefGender],
   };
-
-  const statement2 = {
-    Statement: 'UPDATE "user" SET lastUpdatedAt = ? WHERE id = ?',
-    Parameters: [Date.now(), uid],
-  };
-  // const statement = {
-  //   Statement: "SELECT * FROM courses",
-  // };
-  console.log(JSON.stringify(statement, null, 2));
-  const [result] = await Promise.all([
-    docClient.send(new ExecuteStatementCommand(statement)),
-    docClient.send(new ExecuteStatementCommand(statement2)),
-  ]);
-
-  const items = result.Items;
-  const s = new Set();
-  items.forEach((item) => s.add(item.student_id));
-
-  /** @type {import('@aws-sdk/lib-dynamodb').UpdateCommandInput} */
-  if (s.size !== 0) {
-    const param = {
-      TableName: "user-feed",
-      Key: {
-        uid,
-      },
-      UpdateExpression:
-        "SET feed = list_append(if_not_exists(feed, :emptyList), :newUser)",
-      ExpressionAttributeValues: {
-        ":newUser": [...s],
-        ":emptyList": [],
-      },
-    };
-    await docClient.send(new UpdateCommand(param));
-  }
-
-  const param = {
-    TableName: "user-feed",
-    Key: {
-      uid,
-    },
-  };
-
-  return (await docClient.send(new GetCommand(param))).Item;
 }
-
-export default {
-  feedBuilder,
-};

@@ -36,7 +36,7 @@ app.use(
     credentials: true,
   })
 );
-app.use(express.json());
+app.use(express.json({ limit: "100mb" }));
 app.use(session(sessionOptions));
 
 const router = express.Router();
