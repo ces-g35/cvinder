@@ -1,9 +1,6 @@
 import { v4 as uuid } from "uuid";
 import { DynamoDBClient, QueryCommand } from "@aws-sdk/client-dynamodb";
 import {
-  QueryCommand,
-} from "@aws-sdk/client-dynamodb";
-import {
   PutCommand,
   DeleteCommand,
   ScanCommand,
