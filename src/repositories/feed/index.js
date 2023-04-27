@@ -28,13 +28,15 @@ async function feedBuilder(uid, prefGender, accessToken, lastUpdated) {
     Parameters: [Date.now(), uid],
   };
 
-  const result = await Promise.all([
-    docClient.send(new ExecuteStatementCommand(findNewUserStatement)),
-    docClient.send(new ExecuteStatementCommand(updateLastUpdatedStatement)),
-  ])[0];
+  const result = (
+    await Promise.all([
+      docClient.send(new ExecuteStatementCommand(findNewUserStatement)),
+      docClient.send(new ExecuteStatementCommand(updateLastUpdatedStatement)),
+    ])
+  )[0];
 
   /** @type {{id: string, student_id: string}[]} */
-  const items = result.Item;
+  const items = result.Items;
   if (items === undefined) return [];
 
   /** @type {Set<string>} */
