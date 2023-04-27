@@ -1,7 +1,7 @@
 const COOKIE_TTL = 1209600;
-window.useGuard = () => {
+window.useGuard = (isSet = false) => {
   const IS_LOGGEDIN = localStorage.getItem("CVINDER_IS_LOGGEDIN");
-  if (IS_LOGGEDIN) {
+  if (IS_LOGGEDIN && !isSet) {
     const { expiresAt } = JSON.parse(IS_LOGGEDIN);
     if (expiresAt < Date.now()) {
       localStorage.removeItem("CVINDER_IS_LOGGEDIN");

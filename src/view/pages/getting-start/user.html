@@ -1,8 +1,8 @@
 <script>
   const { is_new } = useQuery();
-  console.log(is_new);
 
   if (is_new === "false") {
+    useGuard(true);
     router.push("/user/swipe");
   }
 
