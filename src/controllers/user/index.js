@@ -225,10 +225,7 @@ async function getFeed(req, res) {
     req.user.lastUpdatedAt
   );
   const withUser = await Promise.all(
-    result.map(async (item) => ({
-      id: item.id,
-      user: await userRepo.getUser(item.id),
-    }))
+    result.map((item) => userRepo.getUser(item.id).Item)
   );
   res.json(withUser);
 }
