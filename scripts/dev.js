@@ -37,12 +37,12 @@ const whenServerAvaliable = async (port) => {
   });
 };
 
-buildDev();
+buildDev({ debug: true });
 
 watcher.on("change", (_, filename) => {
   console.log(`File ${filename} changed`);
   serverChild.kill();
-  buildDev();
+  buildDev({ debug: true });
 
   whenServerAvaliable(PORT).then(() => {
     console.log("Server restarted");
