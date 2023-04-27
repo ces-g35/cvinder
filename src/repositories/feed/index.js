@@ -86,8 +86,9 @@ async function isMatchAndMarkMatched(uid, id) {
   /**@type {import('@aws-sdk/lib-dynamodb').QueryCommandInput} */
   const param = {
     TableName: "user-feed",
-    Statement: 'SELECT * FROM "user-feed" WHERE uid = ? AND id = ?',
-    Parameters: [id, uid],
+    Statement:
+      'SELECT * FROM "user-feed" WHERE uid = ? AND id = ? AND status = ?',
+    Parameters: [id, uid, "Like"],
   };
 
   const result = await docClient.send(new ExecuteStatementCommand(param));

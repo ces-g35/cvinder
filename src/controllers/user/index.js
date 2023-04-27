@@ -257,16 +257,19 @@ async function makeSwipe(req, res) {
 
   try {
     await feedRepo.makeStatus(uid, id, status);
-    if (status !== "Match") {
+    if (status !== "Like") {
       res.sendStatus(200);
       return;
     }
+
     const isMatched = await feedRepo.isMatchAndMarkMatched(uid, id);
     if (!isMatched) {
       res.sendStatus(200);
       return;
     }
-    await feedRepo.makeStatus(id, uid, status);
+
+    await feedRepo.makeStatus(id, uid, "Matched");
+    await feedRepo.makeStatus(uid, id, "Matched");
   } catch (error) {
     console.log(error);
     res.status(400).json({ error: "something went wrong" });
