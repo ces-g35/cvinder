@@ -215,7 +215,6 @@ async function getUserCourses(req, res) {
  */
 async function getFeed(req, res) {
   const id = req.profile.id;
-  const prefGender = req.profile.prefGender;
   const accessToken = req.session.accessToken;
   console.log(req.user);
   const result = await feedRepo.feedBuilder(

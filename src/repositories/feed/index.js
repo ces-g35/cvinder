@@ -28,11 +28,10 @@ async function feedBuilder(uid, prefGender, accessToken, lastUpdated) {
     Parameters: [Date.now(), uid],
   };
 
-  const result = await docClient.send(
-    new ExecuteTransactionCommand({
-      TransactStatements: [findNewUserStatement, updateLastUpdatedStatement],
-    })
-  );
+  const result = await Promise.all([
+    docClient.send(new ExecuteStatementCommand(findNewUserStatement)),
+    docClient.send(new ExecuteStatementCommand(updateLastUpdatedStatement)),
+  ])[0];
 
   /** @type {{id: string, student_id: string}[]} */
   const items = result.Responses[0].Item;
