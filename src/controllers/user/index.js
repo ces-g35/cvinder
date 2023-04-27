@@ -268,8 +268,8 @@ async function makeSwipe(req, res) {
       return;
     }
 
-    await feedRepo.makeStatus(id, uid, "Matched");
-    await feedRepo.makeStatus(uid, id, "Matched");
+    await feedRepo.makeStatus(id, uid, "Like");
+    await feedRepo.makeStatus(uid, id, "Like");
   } catch (error) {
     console.log(error);
     res.status(400).json({ error: "something went wrong" });
