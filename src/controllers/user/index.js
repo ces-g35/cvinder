@@ -114,7 +114,7 @@ async function updateUser(req, res) {
 }
 
 async function getProfile(req, res) {
-  res.json(req.profile);
+  res.json(req.user);
 }
 
 /**
