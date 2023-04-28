@@ -1,13 +1,21 @@
 <script>
+  const { is_new } = useQuery();
+
+  if (is_new === "false") {
+    useGuard(true);
+    router.push("/user/swipe");
+  }
+
   document.getElementById(
     "getting-start-progress"
   ).style = `width: calc(14.28% * 3)`;
+
   const usernameInput = document.querySelector("input");
   const continueSelector = document.getElementById("continue");
-  const setUsername = useState("username", "", [
-    (username) => {
-      console.log("username", username);
-      if (username.length > 0) {
+  const setUsername = useState("bio", "", [
+    (bio) => {
+      console.log("bio", bio);
+      if (bio.length > 0) {
         continueSelector.classList.add("bg-primary");
         continueSelector.classList.remove("bg-button-secondary");
         continueSelector.classList.remove("text-secondary-contrast");
@@ -27,23 +35,19 @@
   });
 </script>
 
-<div class="text-4xl text-black mt-10 font-bold">My name is</div>
-<div class="text-secondary mt-3 text-sm mb-12">
-  This name will display in your profile
-</div>
-<div class="">
-  <input
-    placeholder="Enter your name"
-    focused
-    type="text"
-    class="w-full border-b-2 border-secondary py-2 bg-transparent text-lg"
-  />
-</div>
+<div class="text-4xl text-black mt-10 font-bold">Bio</div>
+<div class="text-secondary mt-3 text-sm mb-12">Write something about you.</div>
+<input
+  placeholder="Bio"
+  focused
+  type="text"
+  class="w-full border-b-2 border-secondary py-2 bg-transparent text-lg"
+/>
 <div class="h-full"></div>
 <button
   id="continue"
   disabled="true"
-  onclick="router.push('/getting-start/bio')"
+  onclick="router.push('/getting-start/birthday')"
   class="my-12 text-center font-bold rounded-full bg-button-secondary text-secondary-contrast p-2"
 >
   CONTINUE

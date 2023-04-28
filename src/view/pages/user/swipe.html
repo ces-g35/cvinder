@@ -1,9 +1,193 @@
 <script>
   useGuard();
 
-  var start = null;
+  const swipeContainer = document.getElementById("swipe-container");
 
-  const registerSwipable = (swipeable) => {
+  const setLikeStatus = async (isLike, user) => {
+    const { status } = await fetch("/api/user/swipe", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        id: user.id,
+        status: isLike ? "Like" : "Dislike",
+      }),
+    }).then((r) => {
+      if (r.status == 200) return r.json();
+      else return Promise.resolve({ status: "Liked" });
+    });
+
+    if (status == "Matched") {
+      swipeContainer.innerHTML += `
+      <div style="z-index: 100" class="absolute my-auto center w-full aspect-card">
+        <div
+          style="background-image: url('/api/user/image/${user.photos[0]}');background-position:center;background-size:cover;"
+          class="aspect-card flex relative flex-grow items-center justify-center bg-overlay"
+        >
+          <img src="/icons/match.svg" class="w-auto h-24 animate-match-main" />
+          <img
+            src="/icons/match-outline.svg"
+            class="w-auto animate-match-sub-0 absolute"
+          />
+          <div class="absolute w-full bottom-4">
+            <div class="flex mx-5 bg-white rounded-lg p-2 justify-center">
+              <input placeholder="Say hi!" class="w-full text-lg" type="text" />
+              <button class="text-sm p-0 text-blue">Send</button>
+            </div>
+          </div>
+        </div>
+      </div>`;
+    }
+  };
+
+  const createSwipeable = (imgs, user, myInterest) => {
+    const matchedInterest = user.interests.filter((interest) =>
+      myInterest.includes(interest)
+    );
+    let i = 0;
+    const swipeable = document.createElement("div");
+    swipeable.classList.add(
+      "absolute",
+      "my-auto",
+      "center",
+      "flex",
+      "w-full",
+      "aspect-card"
+    );
+    swipeable.id = "swipeable";
+    swipeable.style.zIndex = 99;
+    const card = document.createElement("div");
+    card.classList.add("bg-secondary", "relative");
+    card.style.flexGrow = 1;
+    card.style.backgroundImage = `url(${imgs[i]})`;
+    card.style.backgroundPosition = "center";
+    card.style.backgroundSize = "cover";
+    const imageCarousel = document.createElement("div");
+    imageCarousel.classList.add("w-full");
+    const imageCarouselContainer = document.createElement("div");
+    imageCarouselContainer.classList.add(
+      "flex",
+      "px-1",
+      "justify-center",
+      "gap-2"
+    );
+    imageCarousel.appendChild(imageCarouselContainer);
+    card.appendChild(imageCarousel);
+
+    const bioOverlay = document.createElement("div");
+    bioOverlay.classList.add("absolute", "bottom-0", "w-full", "text-white");
+    bioOverlay.style.backgroundImage = "linear-gradient(transparent, black)";
+    bioOverlay.style.height = "250px";
+    bioOverlay.innerHTML = `
+    <div class="flex flex-col px-2 space-y-2">
+      <div class="flex text-3xl gap-2">
+        <div class="font-bold">${user.username}</div>
+        <div>${Math.floor(
+          (new Date() / 1000 - user.birthdate) / 31557600
+        )}</div>
+
+
+      </div>
+      <div class="flex gap-2 w-full flex-wrap">
+        ${matchedInterest
+          .map(
+            (interest) =>
+              `<div class="border break-none border-white h-fit-content rounded-full px-2 py-1 text-sm">${interest}</div>`
+          )
+          .join("")}
+      </div>
+      <div class="mt-2 text-sm">
+        ${user.bio}
+      </div>
+    </div>
+    `;
+    card.appendChild(bioOverlay);
+
+    const swipeLeft = document.createElement("img");
+    swipeLeft.src = "/icons/swipe-left.svg";
+    const swipeRight = document.createElement("img");
+    swipeRight.src = "/icons/swipe-right.svg";
+    const center = document.createElement("div");
+    center.classList.add(
+      "absolute",
+      "bottom-2",
+      "w-full",
+      "flex",
+      "justify-center",
+      "gap-4"
+    );
+
+    swipeable.appendChild(card);
+    card.appendChild(center);
+    center.appendChild(swipeLeft);
+    center.appendChild(swipeRight);
+
+    const updateCarosel = () => {
+      imageCarouselContainer.innerHTML = "";
+      for (const imgIndex in imgs) {
+        const imageCarouselItem = document.createElement("div");
+        imageCarouselItem.classList.add(
+          "w-full",
+          "h-2",
+          "mt-1",
+          "rounded-full"
+        );
+        imageCarouselItem.style.backgroundColor = "white";
+        imageCarouselItem.style.opacity = imgIndex == i ? 0.8 : 0.5;
+        imageCarouselItem.style.height = "3px";
+        imageCarouselItem.style.cursor = "pointer";
+        imageCarouselContainer.appendChild(imageCarouselItem);
+      }
+    };
+
+    const setSwipeRight = (isSwipe) => {
+      isSwipe
+        ? (swipeRight.src = "/icons/swipe-right-fill.svg")
+        : (swipeRight.src = "/icons/swipe-right.svg");
+    };
+
+    const setSwipeLeft = (isSwipe) => {
+      isSwipe
+        ? (swipeLeft.src = "/icons/swipe-left-fill.svg")
+        : (swipeLeft.src = "/icons/swipe-left.svg");
+    };
+
+    const setNextImg = () => {
+      if (i >= imgs.length - 1) return;
+      i++;
+      updateCarosel();
+      card.style.backgroundImage = `url(${imgs[i]})`;
+    };
+    const setLastImg = () => {
+      if (i <= 0) return;
+      i--;
+      updateCarosel();
+      card.style.backgroundImage = `url(${imgs[i]})`;
+    };
+
+    const setSwipeNext = (isLike) => setLikeStatus(isLike, user);
+
+    updateCarosel();
+
+    return {
+      swipeable,
+      setSwipeRight,
+      setSwipeLeft,
+      setNextImg,
+      setLastImg,
+      setSwipeNext,
+    };
+  };
+
+  const registerSwipable = ({
+    swipeable,
+    setSwipeRight,
+    setSwipeLeft,
+    setNextImg,
+    setLastImg,
+    setSwipeNext,
+  }) => {
     swipeable.style.cursor = "grab";
     const swipeableWidth = swipeable.offsetWidth;
     const swipeableHeight = swipeable.offsetHeight;
@@ -19,37 +203,55 @@
     const setTouchMove = (x, y) => {
       let touchX = x - touchstartX;
       let touchY = y - touchstartY;
-      console.log("touchmove", touchX, touchY);
       const translateX = touchX;
       const translateY = touchY;
       const rotate = Math.min((touchX / swipeableWidth) * 30, 30);
-      console.log("translateX", translateX);
       swipeable.style.transition = "transform 0.2s";
       swipeable.style.transform = `translateX(${translateX}px) translateY(${translateY}px) rotate(${rotate}deg) rotateY(0deg) scale(1)`;
+      console.log("Swipe Move", touchX);
+      setSwipeRight(touchX > 0);
+      setSwipeLeft(touchX < 0);
     };
 
     const onCancel = (x, y) => {
       let touchX = x - touchstartX;
       let touchY = y - touchstartY;
-      if (Math.abs(touchX) > swipeableWidth / 2) {
-        console.log("Swipe Next");
-      } else {
-        swipeable.style.transition = "transform 0.5s";
-        swipeable.style.transform = `translateX(0%) translateY(0%) rotate(0deg) rotateY(0deg) scale(1)`;
+
+      if (touchX == 0 || touchY == 0) {
+        const isNextImg =
+          x - swipeable.getBoundingClientRect().x > swipeableWidth / 2;
+        isNextImg ? setNextImg() : setLastImg();
+        return;
       }
+
+      if (Math.abs(touchX) > swipeableWidth / 2) {
+        console.log("Swipe Next", touchX > 0);
+        setSwipeNext(touchX > 0);
+        swipeable.style.transition = "all 0.5s";
+        swipeable.style.opacity = 0;
+        setTimeout(() => {
+          swipeContainer.removeChild(swipeable);
+        }, 700);
+        return;
+      }
+      setSwipeRight(false);
+      setSwipeLeft(false);
+      console.log("Swipe Cancel");
+      swipeable.style.transition = "transform 0.5s";
+      swipeable.style.transform = `translateX(0%) translateY(0%) rotate(0deg) rotateY(0deg) scale(1)`;
     };
 
     swipeable.addEventListener("touchstart", (event) => {
       setTouchStart(
-        event.changedTouches[0].screenX,
-        event.changedTouches[0].screenY
+        event.changedTouches[0].clientX,
+        event.changedTouches[0].clientY
       );
     });
 
     swipeable.addEventListener("touchmove", (event) => {
       setTouchMove(
-        event.changedTouches[0].screenX,
-        event.changedTouches[0].screenY
+        event.changedTouches[0].clientX,
+        event.changedTouches[0].clientY
       );
     });
 
@@ -57,8 +259,8 @@
       "touchend",
       (event) => {
         onCancel(
-          event.changedTouches[0].screenX,
-          event.changedTouches[0].screenY
+          event.changedTouches[0].clientX,
+          event.changedTouches[0].clientY
         );
       },
       false
@@ -68,71 +270,59 @@
 
     swipeable.addEventListener("mousedown", (event) => {
       isOnDrag = true;
-      setTouchStart(event.screenX, event.screenY);
+      setTouchStart(event.clientX, event.clientY);
     });
 
     swipeable.addEventListener("mousemove", (event) => {
       if (!isOnDrag) return;
-      setTouchMove(event.screenX, event.screenY);
-      console.log("drag", event.screenX, event.screenY);
+      setTouchMove(event.clientX, event.clientY);
       event.preventDefault();
     });
 
     swipeable.addEventListener("mouseleave", (event) => {
+      if (!isOnDrag) return;
       isOnDrag = false;
-      onCancel(event.screenX, event.screenY);
+      onCancel(event.clientX, event.clientY);
     });
 
     swipeable.addEventListener("mouseup", (event) => {
+      if (!isOnDrag) return;
       isOnDrag = false;
-      onCancel(event.screenX, event.screenY);
+      onCancel(event.clientX, event.clientY);
     });
   };
 
-  function* feedList() {
-    //mock feedlist
-    yield [
-      {
-        id: 1,
-        name: "John",
-        age: 20,
-        image: "https://placehold.co/400x600",
-      },
-    ];
-  }
+  const fetchFirstTen = () => {
+    return fetch("/api/user/feed").then((res) => res.json());
+  };
 
-  registerSwipable(document.getElementById("swipeable"));
+  const fetchFeed = async () => {
+    const profile = await fetch("/api/user/me").then((res) => res.json());
+    const feed = await fetchFirstTen();
+    for (const card of feed) {
+      const user = card.user;
+      user.photos.forEach((p) => preloadImage(`/api/user/image/${p}`));
+      const swipe = createSwipeable(
+        user.photos.map((p) => `/api/user/image/${p}`),
+        user,
+        profile.interests
+      );
+      swipeContainer.appendChild(swipe.swipeable);
+      registerSwipable(swipe);
+    }
+  };
+
+  fetchFeed();
+  console.log("Feed");
 </script>
-<div class="h-full flex relative flex-col">
-  <div id="swipeable" style="z-index: 99" class="absolute h-full flex w-full">
-    <div
-      style="
-        flex-grow: 1;
-        background-image: url(https://placehold.co/400x600);
-        background-position: center;
-      "
-      class="my-5 bg-secondary relative"
-    >
-      <div class="absolute bottom-2 w-full flex justify-center gap-4">
-        <img src="/icons/swipe-left.svg" alt="" />
-        <img src="/icons/swipe-right.svg" alt="" />
-      </div>
-    </div>
-  </div>
 
-  <div style="z-index: 98" class="absolute h-full flex w-full">
-    <div
-      style="
-        flex-grow: 1;
-        background-image: url(https://placehold.co/400x600);
-        background-position: center;
-      "
-      class="my-5 bg-secondary relative"
-    >
-      <div class="absolute bottom-2 w-full flex justify-center gap-4">
-        <img src="/icons/swipe-left.svg" alt="" />
-        <img src="/icons/swipe-right.svg" alt="" />
-      </div>
-    </div>
+<div id="swipe-container" class="h-full flex relative flex-col">
+  <div
+    class="m-auto flex border border-primary items-center justify-center rounded-full animate-ping"
+  >
+    <img
+      src="/icons/logo-loader.svg"
+      class="bg-primary p-5 rounded-full w-12 h-12"
+    />
   </div>
 </div>

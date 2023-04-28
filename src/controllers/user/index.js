@@ -254,15 +254,14 @@ async function uploadFile(req, res) {
 }
 
 async function getFile(req, res) {
-  console.log(req.params.key);
   const filePath = path.join(imageStorage, req.params.key);
   try {
-    const file = await fs.readFile(filePath);
-    res.json({ file: file.toString("utf-8") });
+    const file = (await fs.readFile(filePath)).toString("utf-8");
+    const contentType = file.split(";")[0].split(":")[1];
+    res.setHeader("Content-Type", contentType);
+    res.send(Buffer.from(file.split(",")[1], "base64"));
   } catch (error) {
-    res.status(404).send({
-      file: "File not found",
-    });
+    res.status(404).send("File not found");
   }
 }
 

@@ -1,26 +1,29 @@
 const COOKIE_TTL = 1209600;
 window.useGuard = (isSet = false) => {
-  const IS_LOGGEDIN = localStorage.getItem("CVINDER_IS_LOGGEDIN");
-  if (IS_LOGGEDIN && !isSet) {
-    const { expiresAt } = JSON.parse(IS_LOGGEDIN);
-    if (expiresAt < Date.now()) {
-      localStorage.removeItem("CVINDER_IS_LOGGEDIN");
-      window.location.href = "/";
-      return;
+  return new Promise((resolve, reject) => {
+    const IS_LOGGEDIN = localStorage.getItem("CVINDER_IS_LOGGEDIN");
+    if (IS_LOGGEDIN && !isSet) {
+      const { expiresAt } = JSON.parse(IS_LOGGEDIN);
+      if (expiresAt < Date.now()) {
+        localStorage.removeItem("CVINDER_IS_LOGGEDIN");
+        window.location.href = "/";
+        return;
+      }
     }
-  }
-  fetch("/api/user/me").then((res) => {
-    if (res.status !== 401) {
-      localStorage.setItem(
-        "CVINDER_IS_LOGGEDIN",
-        JSON.stringify({
-          expiresAt: Date.now() + COOKIE_TTL,
-        })
-      );
-    } else {
-      localStorage.removeItem("CVINDER_IS_LOGGEDIN");
-      window.location.href = "/";
-    }
+    fetch("/api/user/me").then((res) => {
+      if (res.status !== 401) {
+        localStorage.setItem(
+          "CVINDER_IS_LOGGEDIN",
+          JSON.stringify({
+            expiresAt: Date.now() + COOKIE_TTL,
+          })
+        );
+        res.json().then(resolve);
+      } else {
+        localStorage.removeItem("CVINDER_IS_LOGGEDIN");
+        window.location.href = "/";
+      }
+    });
   });
 };
 
@@ -72,4 +75,8 @@ window.useState = (key, initialState, listener = []) => {
     listener.forEach((l) => l(newState));
   };
   return updateState;
+};
+
+window.preloadImage = (url) => {
+  new Image().src = url;
 };

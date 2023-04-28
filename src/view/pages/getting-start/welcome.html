@@ -55,28 +55,10 @@
         birthdate: convertTimeStamp(state.birthDate),
         gender: state.gender,
         interests: state.interests,
+        bio: state.bio,
       }),
-    });
+    }).then(() => useGuard(false));
   })();
-
-  // (async () =>
-  //   fetch("/api/user/", {
-  //     method: "POST",
-  //     headers: {
-  //       "Content-Type": "application/json",
-  //     },
-  //     body: JSON.stringify({
-  //       photos: await Promise.all(
-  //         state.photos.filter((p) => p).map((p) => convertToBase64(p))
-  //       ),
-  //       username: state.username,
-  //       prefGender: state.prefGender,
-  //       birthdate: convertTimeStamp(state.birthDate),
-  //       gender: state.gender,
-  //       interests: state.interests,
-  //     }),
-  //   }))();
-  console.log(state);
 </script>
 
 <div class="text-center py-12">
