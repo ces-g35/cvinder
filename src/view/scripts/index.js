@@ -38,6 +38,7 @@ window.useParam = () => {
   const filePath = window.globalTree.match(path);
   const pats = filePath
     .replace("./pages", "")
+    .replaceAll("_", "/")
     .replace(".js", "")
     .replace(".", "\\.")
     .replaceAll("/", "\\/")

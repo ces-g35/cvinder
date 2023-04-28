@@ -87,7 +87,7 @@ function walkAndGenerate(dir, parent = [dir]) {
       let pageName = filePath
         .replace(pagePath, "")
         .replace(".html", "")
-        .replace(/\//g, "_");
+        .replace(/[\/\\]/g, "_");
 
       if (pageName.startsWith("_")) {
         pageName = pageName.slice(1);
@@ -102,22 +102,6 @@ function walkAndGenerate(dir, parent = [dir]) {
         .match(matchScript)[0]
         .replace(/<script>|<\/script>/g, "");
 
-      const dirNames = pageName.split(path.sep);
-      dirNames.pop();
-
-      dirNames.reduce((acc, folder) => {
-        if (folder == "") {
-          return acc;
-        }
-        const folderPath = path.join(acc, folder);
-
-        if (!fs.existsSync(folderPath)) {
-          fs.mkdirSync(folderPath);
-        }
-
-        return folderPath;
-      }, distPagePath);
-
       fs.writeFileSync(
         path.join(distPagePath, pageName),
         generatePage(
@@ -128,11 +112,8 @@ function walkAndGenerate(dir, parent = [dir]) {
       );
 
       matchRouteName.forEach((routeName) => {
-        const pagePath = ("." + path.sep + path.join("pages", pageName))
-          .split(path.sep)
-          .join(path.posix.sep);
-        const formatedName = routeName.replaceAll("\\", "/");
-        route[formatedName] = pagePath;
+        const formattedRouteName = routeName.replaceAll("\\", "/");
+        route[formattedRouteName] = "./pages/" + pageName;
       });
     }
   }
