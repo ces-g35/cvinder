@@ -21,6 +21,16 @@ function validateUsername(body) {
   }
 }
 
+function validateBio(body) {
+  if (!body.bio) {
+    throw new Error("Bio is required");
+  }
+
+  if (body.bio.length > 200) {
+    throw new Error("Bio is too long");
+  }
+}
+
 /**
  * @param {object} body
  */
@@ -146,6 +156,7 @@ async function createUser(req, res) {
     validateInterests(body);
     validateGender(body);
     validatePhotos(body);
+    validateBio(body);
   } catch (err) {
     res.status(400).json({ error: err.message });
     return;
@@ -160,6 +171,7 @@ async function createUser(req, res) {
     gender: body.gender,
     interests: body.interests,
     prefGender: body.prefGender,
+    bio: body.bio,
     lastUpdatedAt: 0,
   };
 
