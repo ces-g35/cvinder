@@ -20,7 +20,7 @@ class Node {
   }
 
   match(route) {
-    return this._match(route.split("/"));
+    return this._match(route.split(/[\/_]/g));
   }
 
   _match(routes) {
@@ -43,7 +43,7 @@ function createTree(obj) {
   root.nodes[""] = new Node();
 
   Object.entries(obj).forEach(([key, value]) => {
-    const routes = key.split("/");
+    const routes = key.split(/[\/_]/g);
     createBranch(root, routes, value);
   });
 
@@ -139,7 +139,7 @@ const pathRouter = async () => {
   window.globalTree = createTree(route);
   const filePath = window.globalTree.match(path);
   // for debuging
-  // showTree(window.globalTree);
+  showTree(window.globalTree);
 
   if (filePath) {
     const page = await import(filePath);
