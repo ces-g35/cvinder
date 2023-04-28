@@ -139,7 +139,7 @@ const pathRouter = async () => {
   window.globalTree = createTree(route);
   const filePath = window.globalTree.match(path);
   // for debuging
-  showTree(window.globalTree);
+  // showTree(window.globalTree);
 
   if (filePath) {
     const page = await import(filePath);
