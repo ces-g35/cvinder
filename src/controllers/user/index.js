@@ -326,6 +326,17 @@ async function getUser(req, res) {
   }
 }
 
+async function updateBio(req, res) {
+  const uid = req.profile.id;
+  try {
+    validateBio(req.body);
+    userRepo.updateBio(uid, req.body.bio);
+  } catch (error) {
+    res.status(400).json({ error: err.message });
+    return;
+  }
+}
+
 export default {
   updateUser,
   createUser,
@@ -337,4 +348,5 @@ export default {
   makeSwipe,
   getMathesUser,
   getUser,
+  updateBio,
 };
