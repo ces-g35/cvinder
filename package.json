@@ -12,7 +12,8 @@
   "scripts": {
     "dev": "node scripts/dev.js",
     "build": "node scripts/_build.js",
-    "start": "node src/index.js"
+    "start": "node src/index.js",
+    "serve": "node src/start.js"
   },
   "type": "module"
 }
