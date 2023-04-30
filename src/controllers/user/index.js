@@ -6,6 +6,7 @@ import path from "path";
 import { promises as fs, existsSync } from "fs";
 import feedRepo from "../../repositories/feed/index.js";
 import userRepo from "../../repositories/user/index.js";
+import db from "../../utils/db/index.js";
 
 const imageStorage = path.join(process.cwd(), "images");
 if (!existsSync(imageStorage)) {
@@ -113,6 +114,11 @@ async function updateUser(req, res) {
     if (body.prefGender) {
       validateGender(body);
       updatedUser.prefGender = body.prefGender;
+    }
+
+    if (body.bio) {
+      validateBio(body);
+      updatedUser.bio = body.bio;
     }
   } catch (error) {
     res.status(400).json({ error: error.message });
