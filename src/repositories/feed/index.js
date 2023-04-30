@@ -5,14 +5,13 @@ import {
   UpdateCommand,
 } from "@aws-sdk/lib-dynamodb";
 import { docClient } from "../../utils/db/index.js";
-import { ExecuteTransactionCommand } from "@aws-sdk/client-dynamodb";
 import { buildSearchNewUserFromUpdatedCourse } from "../../utils/feed/index.js";
 
 /**
  * @param {string} uid
  * @param {string} prefGender
  * @param {string} accessToken
- *@param {Date} lastUpdated
+ * @param {Date} lastUpdated
  */
 async function feedBuilder(uid, prefGender, accessToken, lastUpdated) {
   const courses = await cvClient.getCourses(accessToken);
