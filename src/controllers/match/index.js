@@ -1,4 +1,5 @@
 import { getMatchesByUserId } from "../../repositories/match/index.js";
+import userRepo from "../../repositories/user/index.js";
 
 /**
  * Controller for get matches route
@@ -9,12 +10,14 @@ async function getMatches(req, res) {
   const userId = req.profile.id;
 
   const matches = await getMatchesByUserId(userId);
+  for (let i = 0; i < matches.length; i++) {
+    const user = (await userRepo.getUser(matches[i].user_pair)).Item;
+    matches[i].target_name = user.username;
+    matches[i].img_url = user.photos[0];
+  }
 
-  // TODO: add correct name and img url
   const ret = matches.map((match) => {
     return {
-      img_url: "/icons/user-bottom.svg",
-      target_name: "name: " + match.target_id,
       ...match,
     };
   });

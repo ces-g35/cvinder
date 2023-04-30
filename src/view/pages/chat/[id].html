@@ -3,6 +3,8 @@
   let messagePayload = "";
   let firstFetch = true;
   let lastKey = "";
+  let recipientImg = "";
+
   const { id: to } = window.useParam();
 
   const chat = document.getElementById("chat");
@@ -29,25 +31,27 @@
     });
 
     console.log(data);
-  };
+  }
 
-  function init() {
-    fetchHistory();
+  async function init() {
+    await fetchHistory();
     scrollToBottom();
 
-    fetchUser();
+    await fetchUser();
 
-    const es = new EventSource("/api/chat/subscribe", { withCredentials: true })
+    const es = new EventSource("/api/chat/subscribe", {
+      withCredentials: true,
+    });
 
     es.addEventListener("_message", (event) => {
-      console.log('received _message event:', event);
-      handleMessage(JSON.parse(event.data).payload)
-    })
-    
+      console.log("received _message event:", event);
+      handleMessage(JSON.parse(event.data).payload);
+    });
+
     es.addEventListener("seen", (event) => {
-      console.log('received seen event:', event);
-      handleSeen(JSON.parse(event.data).payload)
-    })
+      console.log("received seen event:", event);
+      handleSeen(JSON.parse(event.data).payload);
+    });
   }
 
   function pushFront(newItem) {
@@ -64,17 +68,28 @@
     const div = document.createElement("div");
 
     div.innerText = message.payload;
-    div.classList.add("rounded-xl", "w-fit-content", "p-4")
-    ret.classList.add("p-1", "flex")
+    div.classList.add("rounded-xl", "w-fit-content", "p-2");
+    ret.classList.add("p-1", "flex");
+    const img = document.createElement("img");
+    img.src = recipientImg;
+    img.classList.add(
+      "user-image",
+      "rounded-full",
+      "mr-2",
+      "w-8",
+      "h-8",
+      "object-cover"
+    );
 
     if (message.author == to) {
       div.classList.add("recipient-message");
       ret.classList.add("recipient-container");
-      ret.classList.add("p-1", "flex", "justify-start")
+      ret.classList.add("flex", "justify-start");
+      ret.appendChild(img);
     } else {
       div.classList.add("self-message");
       ret.classList.add("self-container");
-      ret.classList.add("p-1", "flex", "justify-end")
+      ret.classList.add("flex", "justify-end");
     }
 
     ret.appendChild(div);
@@ -82,14 +97,17 @@
     return ret;
   }
 
-  document.getElementById("message-payload").addEventListener("keypress", (event) => {
-    console.log(event, event.key)
-    if(event.key == "Enter") {
-      sendMessage();
-    }
-  });
+  document
+    .getElementById("message-payload")
+    .addEventListener("keypress", (event) => {
+      console.log(event, event.key);
+      if (event.key == "Enter") {
+        sendMessage();
+      }
+    });
 
   document.getElementById("send").addEventListener("click", (event) => {
+    console.log("send");
     sendMessage();
   });
 
@@ -153,42 +171,53 @@
     document.getElementById("conversation").scrollBy(0, 10000000);
   }
 
-  function fetchUser() {
+  async function fetchUser() {
     // TODO: fetch user from api
-    const user = {
-      img_url: "/icons/user-bottom.svg",
-      username: "name: " + to,
-    }
 
-    document.getElementById("user-image").innerText = user.img_url;
+    const data = await fetch(`/api/user/${to}`).then((res) => res.json());
+
+    const user = {
+      img_url: `/api/user/image/${data.photos[0]}`,
+      username: data.username,
+    };
+
+    recipientImg = user.img_url;
+
+    [...document.getElementsByClassName("user-image")].forEach((element) => {
+      element.src = user.img_url;
+    });
+
+    document.getElementById("user-image").src = user.img_url;
     document.getElementById("user-name").innerText = user.username;
   }
 
   document.getElementById("conversation").addEventListener("scroll", (e) => {
     if (e.target.scrollTop == 0 && lastKey) {
-      fetchHistory()
+      fetchHistory();
     }
-  })
+  });
 
   init();
-
 </script>
 
 <style>
   .self-message {
-      background-color: lightgreen;
-      border-bottom-right-radius: 3px;
-      text-align: end;
+    background-color: #47a0fc;
+    color: white;
+    font-size: 0.75rem;
+    border-bottom-right-radius: 3px;
+    text-align: end;
   }
-  
+
   .recipient-message {
-      background-color: #DDD;
-      text-align: start;
-      border-bottom-left-radius: 3px;
+    background-color: #ddd;
+    text-align: start;
+    font-size: 0.75rem;
+    border-bottom-left-radius: 3px;
   }
-  
+
   .sending {
-    background-color: green;
+    background-color: #337cc7;
   }
 
   .user-portrait {
@@ -199,22 +228,40 @@
   }
 </style>
 
-<div class="h-full flex flex-col py-4">
+<div class="h-full flex flex-col">
   <div class="flex flex-col gap-2" id="control-panel">
-    <div id="recipient" class="my-4 flex justify-center">
-      <div class="flex flex-col items-center">
-        <img src="/icons/user-bottom.svg" class="user-portrait" id="user-image">
-        <h5 class="my-1 text-center" id="user-name">ggg</h5>
+    <div
+      id="recipient"
+      class="py-2 flex bg-white border-b border-secondary justify-center"
+    >
+      <div class="w-full">
+        <img
+          onclick="router.push('/chat')"
+          src="/icons/back.svg"
+          class="h-6 w-6 mt-2 ml-1"
+        />
       </div>
+      <div class="flex flex-col items-center">
+        <img
+          src="/icons/user-bottom.svg"
+          class="user-portrait"
+          id="user-image"
+        />
+        <h5 class="my-1 text-center" id="user-name">...</h5>
+      </div>
+      <div class="w-full"></div>
     </div>
   </div>
-  <div class="flex-grow overflow-y-scroll" id="conversation">
-    <ul id="chat" class="m-0 h-full" style="list-style-type: none;">
-    </ul>
+  <div class="flex-grow bg-white overflow-y-scroll" id="conversation">
+    <div id="chat" class="m-0 h-full" style="list-style-type: none"></div>
   </div>
-  <div class="justify-between flex">
-      <input type="text" id="message-payload" class="w-full rounded-lg" placeholder="Type a message..."></input>
-      <button id="send" class="rounded-lg">send</button>
+  <div class="justify-between bg-white border-t border-secondary flex">
+    <input
+      type="text"
+      id="message-payload"
+      class="w-full p-2"
+      placeholder="Type a message..."
+    />
+    <button id="send" class="rounded-lg text-primary">send</button>
   </div>
 </div>
-

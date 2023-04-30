@@ -1,4 +1,31 @@
-import db from "../../utils/db/index.js";
+import { TransactWriteCommand } from "@aws-sdk/lib-dynamodb";
+import db, { docClient } from "../../utils/db/index.js";
+
+/**
+ * record match in match table
+ * @param {Id} userId
+ * @returns {Promise<Array<MatchView>>}
+ */
+export async function addMatch(userId, userPair) {
+  const putBuilder = (user_id, user_pair) => ({
+    Put: {
+      TableName: "match",
+      Item: {
+        id: `${user_id}-${user_pair}`,
+        user_id,
+        user_pair,
+        created_date: Date.now(),
+      },
+    },
+  });
+
+  const param = {
+    TransactItems: [putBuilder(userId, userPair), putBuilder(userPair, userId)],
+  };
+
+  await docClient.send(new TransactWriteCommand(param));
+  return;
+}
 
 /**
  * Get all matches that user has not start chat with
