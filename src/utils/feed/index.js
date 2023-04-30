@@ -12,7 +12,7 @@ export function buildSearchNewUserFromUpdatedCourse(
   prefGender
 ) {
   return {
-    Statement: `SELECT * FROM courses  WHERE cv_cid IN [${courses
+    Statement: `SELECT * FROM courses."cv_cid-createdAt-index"  WHERE cv_cid IN [${courses
       .map(() => "?")
       .join(",")}] AND NOT student_id = ? AND createdAt > ? AND gender = ?`,
     Parameters: [...courses.map((c) => c.cv_cid), uid, lastUpdated, prefGender],
