@@ -23,6 +23,9 @@ async function getProfile(accessToken) {
  */
 async function getCourses(accessToken) {
   // You should change the response below.
+  if (process.env.NODE_ENV === "development")
+    return (await import("./mock_course.js")).default;
+
   const options = {
     headers: {
       Authorization: `Bearer ${accessToken}`,

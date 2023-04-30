@@ -1,6 +1,11 @@
 <script>
   useGuard();
 
+  document.getElementById("swipe").src = "/icons/logo-bottom-selected.svg";
+  document.getElementById("settings").src = "/icons/user-bottom.svg";
+
+  let cardDepth = 0;
+
   const swipeContainer = document.getElementById("swipe-container");
 
   const setLikeStatus = async (isLike, user) => {
@@ -39,6 +44,10 @@
         </div>
       </div>`;
     }
+
+    console.log(cardDepth);
+    cardDepth--;
+    if (cardDepth < 1) await fetchFeed();
   };
 
   const createSwipeable = (imgs, user, myInterest) => {
@@ -299,6 +308,7 @@
   const fetchFeed = async () => {
     const profile = await fetch("/api/user/me").then((res) => res.json());
     const feed = await fetchFirstTen();
+    cardDepth += feed.length;
     for (const card of feed) {
       const user = card.user;
       user.photos.forEach((p) => preloadImage(`/api/user/image/${p}`));

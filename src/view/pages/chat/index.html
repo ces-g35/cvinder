@@ -1,9 +1,9 @@
 <script>
-  window.useGuard()
-  const chatViewDiv = document.getElementById("chat-views")
-  const matchViewDiv = document.getElementById("match-views")
+  window.useGuard();
+  const chatViewDiv = document.getElementById("chat-views");
+  const matchViewDiv = document.getElementById("match-views");
 
-  const chatViews = {}
+  const chatViews = {};
 
   function updateMessage(newMessage) {
     if (newMessage.author in chatViews) {
@@ -18,16 +18,16 @@
   async function fetchChats() {
     const fetchChatViews = await (await fetch("/api/chat")).json();
 
-    fetchChatViews.forEach(addChatView)
+    fetchChatViews.forEach(addChatView);
   }
-  
+
   async function fetchMatches() {
     const fetchMatchViews = await (await fetch("/api/match")).json();
+    console.log(fetchMatchViews);
+    fetchMatchViews.forEach(addMatchView);
 
-    fetchMatchViews.forEach(addMatchView)
-
-    if(fetchMatchViews.length == 0) {
-      document.getElementById("match-view-container").remove()
+    if (fetchMatchViews.length == 0) {
+      document.getElementById("match-view-container").remove();
     }
   }
 
@@ -63,7 +63,7 @@
     const div = document.createElement("div");
     const div_0_div = document.createElement("div");
     const div_0_div_0_img = document.createElement("img");
-    const div_1_div  = document.createElement("div");
+    const div_1_div = document.createElement("div");
     const div_1_div_0_h3 = document.createElement("h3");
     const div_1_div_1_h5 = document.createElement("h5");
 
@@ -72,23 +72,32 @@
     div_1_div.append(div_1_div_0_h3, div_1_div_1_h5);
 
     div.classList.add("flex", "py-4");
-    div_0_div_0_img.setAttribute("src", obj.img_url);
+    div_0_div_0_img.setAttribute("src", `/api/user/image/${obj.img_url}`);
     div_0_div_0_img.style.height = "60px";
-    div_0_div.classList.add("flex", "justify-center", "items-center")
-    div_1_div.classList.add("flex-grow", "flex", "flex-col", "overflow-x-hidden");
-    div_1_div_0_h3.classList.add("m-0", "py-1", "px-2");
-    div_1_div_1_h5.classList.add("m-0", "py-1", "px-2");
+    div_0_div_0_img.style.width = "60px";
+    div_0_div_0_img.style.objectFit = "cover";
+
+    div_0_div_0_img.classList.add("rounded-full");
+    div_0_div.classList.add("flex", "justify-center", "items-center");
+    div_1_div.classList.add(
+      "flex-grow",
+      "flex",
+      "flex-col",
+      "overflow-x-hidden"
+    );
+    div_1_div_0_h3.classList.add("m-0", "text-lg", "py-1", "px-2");
+    div_1_div_1_h5.classList.add("m-0", "font-thin", "py-1", "px-2");
 
     div_1_div_0_h3.innerText = obj.recipient_name;
     div_1_div_1_h5.innerText = obj.message;
 
     div.addEventListener("click", () => {
-      router.push(`/chat/${obj.recipient_id}`)
-    })
+      router.push(`/chat/${obj.recipient_id}`);
+    });
 
     return div;
   }
-  
+
   function matchViewToElement(obj) {
     // 1  <div class="py-4 flex flex-col">
     // 2    <img src="/icons/user-bottom.svg" style="height: 60px; width: 60px; object-fit: cover;"/>
@@ -106,9 +115,9 @@
 
     div.append(div_0_img, div_1_div);
     div_1_div.appendChild(div_1_div_0_h6);
-    
+
     div.classList.add("px-2", "py-4");
-    div_0_img.setAttribute("src", obj.img_url);
+    div_0_img.setAttribute("src", `/api/user/image/${obj.img_url}`);
     div_0_img.style.height = "60px";
     div_0_img.style.width = "100%";
     div_0_img.style.objectFit = "cover";
@@ -120,8 +129,8 @@
     div_1_div_0_h6.innerText = obj.target_name;
 
     div.addEventListener("click", () => {
-      router.push(`/chat/${obj.target_id}`)
-    })
+      router.push(`/chat/${obj.target_id}`);
+    });
 
     return div;
   }
@@ -131,13 +140,15 @@
 
     fetchMatches();
 
-    const es = new EventSource("/api/chat/subscribe", { withCredentials: true });
+    const es = new EventSource("/api/chat/subscribe", {
+      withCredentials: true,
+    });
 
     es.addEventListener("_message", (e) => {
       const eventPayload = JSON.parse(e.data).payload;
-      
+
       updateMessage(eventPayload);
-    })
+    });
   }
 
   init();
@@ -150,19 +161,33 @@
   }
 
   ::-webkit-scrollbar {
-    width: .5em;
-    height: .5em;
+    width: 0.5em;
+    height: 0.5em;
   }
 </style>
-<div class="h-full flex relative flex-col scroll">
-  <div id="match-view-container">
-    <span>New Matches</span>
+
+<div class="mx-12 py-5 flex h-full flex-col">
+  <div class="h-full flex relative flex-col">
+    <img src="/icons/logo-sm.svg" style="width: 120px" class="mx-auto" />
+    <div class="h-full flex relative flex-col">
+      <div class="h-full flex relative flex-col scroll">
+        <div class="mt-2 font-bold" id="match-view-container">
+          <span>Your Matches</span>
+        </div>
+        <div class="flex overflow-x-scroll" id="match-views"></div>
+        <div class="font-bold">
+          <span>Messages</span>
+        </div>
+        <div class="flex-grow overflow-y-scroll scroll" id="chat-views"></div>
+      </div>
+    </div>
+    <div class="flex mx-12 justify-between">
+      <img src="/icons/logo-bottom.svg" onclick="router.push('/user/swipe')" />
+      <img src="/icons/chat-bottom-selected.svg" />
+      <img
+        src="/icons/user-bottom.svg"
+        onclick="router.push('/user/settings')"
+      />
+    </div>
   </div>
-  <div class="flex overflow-x-scroll" id="match-views">
-  </div>
-  <div>
-    <span>Messages</span>
-  </div>
-  <div class="flex-grow overflow-y-scroll scroll" id="chat-views">
-  </div>
-</div> 
+</div>

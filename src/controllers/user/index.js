@@ -5,7 +5,9 @@ import { docClient } from "../../utils/db/index.js";
 import path from "path";
 import { promises as fs, existsSync } from "fs";
 import feedRepo from "../../repositories/feed/index.js";
+import { addMatch } from "../../repositories/match/index.js";
 import userRepo from "../../repositories/user/index.js";
+import db from "../../utils/db/index.js";
 
 const imageStorage = path.join(process.cwd(), "images");
 if (!existsSync(imageStorage)) {
@@ -114,11 +116,17 @@ async function updateUser(req, res) {
       validateGender(body);
       updatedUser.prefGender = body.prefGender;
     }
+
+    if (body.bio) {
+      validateBio(body);
+      updatedUser.bio = body.bio;
+    }
   } catch (error) {
     res.status(400).json({ error: error.message });
     return;
   }
 
+  console.log(updatedUser, id);
   await db.updateItem("user", id, updatedUser);
   res.sendStatus(204);
 }
@@ -206,7 +214,7 @@ async function createUser(req, res) {
         },
       });
     });
-    console.log(JSON.stringify(transactionCommandInput, null, 2));
+
     await docClient.send(new TransactWriteCommand(transactionCommandInput));
     res.sendStatus(201);
   } catch (err) {
@@ -229,7 +237,7 @@ async function getUserCourses(req, res) {
 async function getFeed(req, res) {
   const id = req.profile.id;
   const accessToken = req.session.accessToken;
-  console.log(req.user);
+
   const result = await feedRepo.feedBuilder(
     id,
     req.user.prefGender,
@@ -288,6 +296,7 @@ async function makeSwipe(req, res) {
 
     await feedRepo.makeStatus(id, uid, "Matched");
     await feedRepo.makeStatus(uid, id, "Matched");
+    await addMatch(uid, id);
     res.json({
       status: "Matched",
     });
@@ -307,6 +316,16 @@ async function getMathesUser(req, res) {
   }
 }
 
+async function getUser(req, res) {
+  const uid = req.params.id;
+  try {
+    res.json((await userRepo.getUser(uid)).Item);
+  } catch (error) {
+    console.log(error);
+    res.status(400).json({ error: "something went wrong" });
+  }
+}
+
 export default {
   updateUser,
   createUser,
@@ -317,4 +336,5 @@ export default {
   getFile,
   makeSwipe,
   getMathesUser,
+  getUser,
 };

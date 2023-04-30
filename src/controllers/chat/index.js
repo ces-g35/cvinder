@@ -17,6 +17,8 @@ import {
   getMatchByUserPair,
 } from "../../repositories/match/index.js";
 
+import userRepo from "../../repositories/user/index.js";
+
 import { docClient } from "../../utils/db/index.js";
 
 import { TransactWriteCommand } from "@aws-sdk/lib-dynamodb";
@@ -36,11 +38,16 @@ async function getChats(req, res) {
 
   const items = await getRecentChats(userId);
 
+  for (let i = 0; i < items.length; i++) {
+    const user = (await userRepo.getUser(items[i].recipient_id)).Item;
+    console.log(user);
+    items[i].recipient_name = user.username;
+    items[i].img_url = user.photos[0];
+  }
+
   // TODO: map user_id to user
   const ret = items.map((item) => {
     return {
-      recipient_name: "name: " + item.recipient_id,
-      img_url: "/icons/user-bottom.svg",
       ...item,
     };
   });

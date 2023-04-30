@@ -5,6 +5,7 @@ const router = Router();
 
 router.get("/me", userControllers.getProfile);
 router.post("/", userControllers.createUser);
+router.get("/:id", userControllers.getUser);
 router.patch("/", userControllers.updateUser);
 router.get("/courses", userControllers.getUserCourses);
 router.get("/feed", userControllers.getFeed);

@@ -6,9 +6,17 @@
         <slot></slot>
       </div>
       <div class="flex mx-12 justify-between">
-        <img src="/icons/logo-bottom-selected.svg" />
+        <img
+          id="swipe"
+          src="/icons/logo-bottom-selected.svg"
+          onclick="router.push('/user/swipe')"
+        />
         <img src="/icons/chat-bottom.svg" onclick="router.push('/chat')" />
-        <img src="/icons/user-bottom.svg" />
+        <img
+          id="settings"
+          src="/icons/user-bottom.svg"
+          onclick="router.push('/user/settings')"
+        />
       </div>
     </div>
   </div>
