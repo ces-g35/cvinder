@@ -5,10 +5,10 @@ const router = Router();
 
 router.get("/me", userControllers.getProfile);
 router.post("/", userControllers.createUser);
-router.get("/:id", userControllers.getUser);
 router.patch("/", userControllers.updateUser);
 router.get("/courses", userControllers.getUserCourses);
 router.get("/feed", userControllers.getFeed);
+router.get("/:id", userControllers.getUser);
 router.post("/upload", userControllers.uploadFile);
 router.get("/image/:key", userControllers.getFile);
 router.post("/swipe", userControllers.makeSwipe);
