@@ -33,6 +33,8 @@
       body: JSON.stringify({
         bio: bio.value,
       }),
+    }).then(() => {
+      saveBioButton.style.display = "none";
     });
   };
   saveBioButton.addEventListener("click", saveBio);
@@ -42,19 +44,31 @@
 
 <div class="mx-auto mt-5 mb-3">
   <div class="p-1 rounded-full border-4 border-primary">
-    <div class="profile-image rounded-full" id="profile-image" style="
+    <div
+      class="profile-image rounded-full"
+      id="profile-image"
+      style="
         background-image: url(https://placehold.co/400x600);
         background-position: center;
         background-size: cover;
-      "></div>
+      "
+    ></div>
   </div>
 </div>
 <h1 id="name" class="text-center text-2xl mt-1 text-sm">Meen, 20</h1>
 <div class="flex flex-col">
-  <textarea class="w-full border-none bg-secondary-contrast p-2 rounded-lg" id="bio" cols="30" rows="10">
+  <textarea
+    class="w-full border-none bg-secondary-contrast p-2 rounded-lg"
+    id="bio"
+    cols="30"
+    rows="10"
+  >
   </textarea>
-  <button id="save" style="display: none"
-    class="my-12 text-center mx-auto font-bold rounded-full bg-primary text-white p-2">
+  <button
+    id="save"
+    style="display: none"
+    class="my-12 text-center mx-auto font-bold rounded-full bg-primary text-white p-2"
+  >
     CONTINUE
   </button>
 </div>
