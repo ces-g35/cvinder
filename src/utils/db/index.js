@@ -69,16 +69,6 @@ function deleteItem(TableName, Key) {
   return docClient.send(new DeleteCommand({ TableName, Key }));
 }
 
-function buildUpdateExpression(Item) {
-  let UpdateExpression = "set";
-  const ExpressionAttributeValues = {};
-  for (const key in Item) {
-    UpdateExpression += ` ${key} = :${key},`;
-    ExpressionAttributeValues[`:${key}`] = Item[key];
-  }
-  UpdateExpression = UpdateExpression.slice(0, -1);
-  return { UpdateExpression, ExpressionAttributeValues };
-}
 
 /**
  * Update an item in a table
@@ -88,13 +78,9 @@ function buildUpdateExpression(Item) {
  * @returns {Promise<import("@aws-sdk/lib-dynamodb").UpdateCommandOutput>} - A promise that resolves to an object containing the updated item
  */
 function updateItem(TableName, Key, Item) {
-  /** @type {import("@aws-sdk/lib-dynamodb").UpdateCommandInput} */
-  const param = {
-    TableName,
-    Key,
-    ...buildUpdateExpression(Item),
-  };
-  return docClient.send(new UpdateCommand(param));
+  /** @type {import("@aws-sdk/lib-dynamodb").ExecuteStatementCommandInput} */
+  const param = {};
+  return docClient.send(new ExecuteStatementCommand(param));
 }
 
 /**
