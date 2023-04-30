@@ -1,4 +1,17 @@
 const COOKIE_TTL = 1209600;
+const BACKEND_URL = "https://localhost:3000";
+
+const { fetch: originalFetch } = window;
+window.fetch = async (...args) => {
+  let [resource, config] = args;
+  // request interceptor here
+  if (typeof resource === "string" && !resource.startsWith("http")) {
+    resource = `${BACKEND_URL}${resource}`;
+  }
+  const response = await originalFetch(resource, config);
+  return response;
+};
+
 window.useGuard = (isSet = false) => {
   return new Promise((resolve, reject) => {
     const IS_LOGGEDIN = localStorage.getItem("CVINDER_IS_LOGGEDIN");
