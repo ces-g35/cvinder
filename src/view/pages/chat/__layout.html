@@ -1,5 +1,32 @@
 <div class="flex h-full flex w-full overflow-hidden">
-  <div class="mx-auto w-full max-w-sm border flex flex-col">
+  <div
+    class="px-4 py-5 justify-center relative gap-4 items-center flex flex-col lg:flex hidden"
+  >
+    <div class="absolute top-0 pt-4">
+      <img src="/icons/logo-bottom-selected.svg" style="width: 30px" class="" />
+    </div>
+    <div>
+      <img
+        id="swipe"
+        src="/icons/logo-bottom.svg"
+        onclick="router.push('/user/swipe')"
+      />
+    </div>
+    <div>
+      <img
+        src="/icons/chat-bottom-selected.svg"
+        onclick="router.push('/chat')"
+      />
+    </div>
+    <div>
+      <img
+        id="settings"
+        src="/icons/user-bottom.svg"
+        onclick="router.push('/user/settings')"
+      />
+    </div>
+  </div>
+  <div class="mx-auto w-full max-w-sm border flex flex-col lg:max-w-full">
     <slot></slot>
   </div>
 </div>

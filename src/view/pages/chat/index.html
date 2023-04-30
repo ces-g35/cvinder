@@ -168,7 +168,11 @@
 
 <div class="mx-12 py-5 flex h-full flex-col">
   <div class="h-full flex relative flex-col">
-    <img src="/icons/logo-sm.svg" style="width: 120px" class="mx-auto" />
+    <img
+      src="/icons/logo-sm.svg"
+      style="width: 120px"
+      class="mx-auto lg:hidden"
+    />
     <div class="h-full flex relative flex-col">
       <div class="h-full flex relative flex-col scroll">
         <div class="mt-2 font-bold" id="match-view-container">
@@ -181,7 +185,7 @@
         <div class="flex-grow overflow-y-scroll scroll" id="chat-views"></div>
       </div>
     </div>
-    <div class="flex mx-12 justify-between">
+    <div class="flex mx-12 justify-between lg:hidden">
       <img src="/icons/logo-bottom.svg" onclick="router.push('/user/swipe')" />
       <img src="/icons/chat-bottom-selected.svg" />
       <img

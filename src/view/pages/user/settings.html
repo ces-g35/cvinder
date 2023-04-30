@@ -7,6 +7,11 @@
     const user = await fetch("/api/user/me").then((res) => res.json());
     document.getElementById("profile-image").style.backgroundImage =
       "url('/api/user/image/" + user.photos[0] + "')";
+
+    document.getElementById("name").innerText =
+      user.name +
+      ", " +
+      Math.floor((new Date() / 1000 - user.birthdate) / 31557600);
     bio.value = user.bio;
     originalBio = user.bio;
   };
@@ -44,7 +49,7 @@
       "></div>
   </div>
 </div>
-<h1 class="text-center text-2xl mt-1 text-sm">Meen, 20</h1>
+<h1 id="name" class="text-center text-2xl mt-1 text-sm">Meen, 20</h1>
 <div class="flex flex-col">
   <textarea class="w-full border-none bg-secondary-contrast p-2 rounded-lg" id="bio" cols="30" rows="10">
   </textarea>
