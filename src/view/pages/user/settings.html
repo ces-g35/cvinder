@@ -9,7 +9,7 @@
       "url('/api/user/image/" + user.photos[0] + "')";
 
     document.getElementById("name").innerText =
-      user.name +
+      user.username +
       ", " +
       Math.floor((new Date() / 1000 - user.birthdate) / 31557600);
     bio.value = user.bio;
@@ -55,7 +55,7 @@
     ></div>
   </div>
 </div>
-<h1 id="name" class="text-center text-2xl mt-1 text-sm">Meen, 20</h1>
+<h1 id="name" class="text-center text-2xl mt-1 text-sm"></h1>
 <div class="flex flex-col">
   <textarea
     class="w-full border-none bg-secondary-contrast p-2 rounded-lg"

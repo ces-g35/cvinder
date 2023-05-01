@@ -7,7 +7,7 @@
     const timestamp = Date.UTC(year, month - 1, day) / 1000;
     return timestamp;
   };
-
+  const continueSelector = document.getElementById("continue");
   const convertToBase64 = (file) =>
     new Promise((resolve, reject) => {
       const fileReader = new FileReader();
@@ -57,7 +57,15 @@
         interests: state.interests,
         bio: state.bio,
       }),
-    }).then(() => useGuard(false));
+    })
+      .then(() => useGuard(false))
+      .then(() => {
+        continueSelector.classList.add("bg-primary");
+        continueSelector.classList.remove("bg-button-secondary");
+        continueSelector.classList.remove("text-secondary-contrast");
+        continueSelector.classList.add("text-white");
+        continueSelector.removeAttribute("disabled");
+      });
   })();
 </script>
 
@@ -75,8 +83,10 @@
 </div>
 <div class="h-full"></div>
 <button
+  disabled
+  id="continue"
   onclick="router.push('/user/swipe')"
-  class="my-12 text-center font-bold rounded-full bg-primary text-white p-2"
+  class="my-12 text-center font-bold rounded-full bg-secondary-contrast text-secondary p-2"
 >
   CONTINUE
 </button>
