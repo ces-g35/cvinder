@@ -1,26 +1,29 @@
-# Cvinder 
+# Cvinder
+
 Computer Engineering Essential Group 35 Final Project Report
 
 TODO: write description
 
 ## Contents
+
 - Members
 - How to use
 - Requirements
-    - Basic Requirements
-    - Challenging Requirements
+  - Basic Requirements
+  - Challenging Requirements
 - Gant chart and Assigned task
 - Stack
 - Setup
-    - Environment variables
-    - Run dev
-    - Build production
+  - Environment variables
+  - Run dev
+  - Build production
 
 ## Members
-1. นายศุภครินทร์ เนียรสุพรพรรณ 6430385121
-2. นายศุภครินทร์ เนียรสุพรพรรณ 6430385121
-3. นายศุภครินทร์ เนียรสุพรพรรณ 6430385121
-4. นายศุภครินทร์ เนียรสุพรพรรณ 6430385121
+
+1. Supakarin Niansupornpun 6430385121
+2. Patcharapol Sankaew 6430250021
+3. Pannawich Lohanimit 6532120621
+4. Gongpob Phochanasom 6531302321
 
 ## How to use
 
@@ -33,17 +36,17 @@ TODO: write description
 ## Gant chart and Assigned task
 
 ## Stack
-- Frontent
-    - Failwindcss
-    - Meen's framework
+
+- Frontend
+  - Failwindcss
+  - Meen's framework
 - Backend
-    - Express.js
-    - DynamoDB
+  - Express.js
+  - DynamoDB
 
 ## Setup
 
 ### Environment variables
-
 
 ### Run dev
 
