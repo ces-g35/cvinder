@@ -12,7 +12,9 @@
   "scripts": {
     "dev": "node scripts/dev.js",
     "build": "node scripts/_build.js",
-    "start": "node src/index.js"
+    "start": "node src/index.js",
+    "docs:build": "marp --html ./presentation/index.md",
+    "docs:preview" : "marp --server ./presentation"
   },
   "type": "module"
 }
