@@ -1397,5 +1397,5 @@ textarea {
 }
 
 body {
-  min-height: -webkit-fill-available;
+  height: -webkit-fill-available;
 }
