@@ -86,7 +86,7 @@ Want to find friends? Use Cvinder to find a match in your Mycourseville class.
 
 - Frontend
   - Failwindcss
-  - Meen's framework
+  - Naked.js
 - Backend
   - Express.js
   - DynamoDB
