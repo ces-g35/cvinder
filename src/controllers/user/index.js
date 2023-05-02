@@ -337,6 +337,11 @@ async function updateBio(req, res) {
   }
 }
 
+function logout(req, res) {
+  req.session.destroy();
+  res.sendStatus(204);
+}
+
 export default {
   updateUser,
   createUser,
@@ -349,4 +354,5 @@ export default {
   getMathesUser,
   getUser,
   updateBio,
+  logout,
 };

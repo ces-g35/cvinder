@@ -14,5 +14,6 @@ router.get("/image/:key", userControllers.getFile);
 router.post("/swipe", userControllers.makeSwipe);
 router.post("/mathes", userControllers.getMathesUser);
 router.patch("/bio", userControllers.updateBio);
+router.get("/logout", userControllers.logout);
 
 export default router;
