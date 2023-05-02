@@ -1400,3 +1400,8 @@ textarea {
     max-width: 100%;
   }
 }
+
+.px-12 {
+  padding-left: 3rem;
+  padding-right: 3rem;
+}
