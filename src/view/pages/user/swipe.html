@@ -25,9 +25,17 @@
 
     if (status == "Matched") {
       swipeContainer.innerHTML += `
-      <div style="z-index: 100" class="absolute my-auto center w-full aspect-card">
+      <div
+        id="match"
+        style="z-index: 100"
+        class="absolute my-auto center w-full aspect-card"
+      >
         <div
-          style="background-image: url('/api/user/image/${user.photos[0]}');background-position:center;background-size:cover;"
+          style="
+            background-image: url('/api/user/image/');
+            background-position: center;
+            background-size: cover;
+          "
           class="aspect-card flex relative flex-grow items-center justify-center bg-overlay"
         >
           <img src="/icons/match.svg" class="w-auto h-24 animate-match-main" />
@@ -35,11 +43,11 @@
             src="/icons/match-outline.svg"
             class="w-auto animate-match-sub-0 absolute"
           />
-          <div class="absolute w-full bottom-4">
-            <div class="flex mx-5 bg-white rounded-lg p-2 justify-center">
-              <input placeholder="Say hi!" class="w-full text-lg" type="text" />
-              <button class="text-sm p-0 text-blue">Send</button>
-            </div>
+          <div
+            onclick="document.getElementById('match').remove()"
+            class="absolute text-center text-white w-full bottom-4"
+          >
+            CONTINUE
           </div>
         </div>
       </div>`;
@@ -332,7 +340,7 @@
   >
     <img
       src="/icons/logo-loader.svg"
-      class="bg-primary p-5 rounded-full w-12 h-12"
+      class="bg-primary p-3 rounded-full w-16 h-16"
     />
   </div>
 </div>
