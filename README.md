@@ -2,7 +2,7 @@
 
 Computer Engineering Essential Group 35 Final Project Report
 
-TODO: write description
+Want to find friends? Use Cvinder to find a match in your Mycourseville class.
 
 ## Contents
 
@@ -17,6 +17,8 @@ TODO: write description
   - Environment variables
   - Run dev
   - Build production
+    - Static only
+    - Serve with express
 
 ## Members
 
@@ -26,6 +28,40 @@ TODO: write description
 4. Gongpob Phochanasom 6531302321
 
 ## How to use
+
+- Login with MycourseVille.
+- If first time follow the register step
+    - Select you gender.
+    ![select-gender](./assets/select-gender.png)
+    - Select which gender you looking for.
+    ![select-look-for](./assets/select-looking-for.png)
+    - Fill your username (can't change later)
+    ![username](./assets/username.png)
+    - Fill your bio (can change later)
+    ![bio](./assets/bio.png)
+    - Fill your birthdate (can't change later)
+    ![birthdate](./assets/birthdate.png)
+    - Choose your interests (can't change later)
+    ![interests](./assets/interests.png)
+    - Upload picture at least 2 (can't change later)
+    ![picture](./assets/picture.png)
+- In swipe page will show up other user, who join in the same class in your Mycourseville. You can click / tap to see other his / her profile
+![swipe-page](./assets/swipe-page.png)
+    - You can swipe left if you don't like
+    ![swipe-left](./assets/swipe-left.png)
+    - You also can swipe right if you like
+    ![swipe-right](./assets/swipe-right.png)
+    - If another user that use like like you too you will match with him / her
+    ![match](./assets/match.png)
+- In chat page you will see person, who match with you and recently chat
+![chat-page](./assets/chat-page.png)
+    - You can click another user profile to chat
+    ![chat-with](./assets/chat-with.png)
+- In profile page you will see your picture profile and your bio. You can edit your bio if you want.
+![profile](./assets/profile.png)
+
+
+
 
 ## Requirements
 
@@ -46,8 +82,44 @@ TODO: write description
 
 ## Setup
 
+```bash
+# install pnpm
+npm i -g pnpm
+
+# install dependencies
+pnpm install
+```
+
 ### Environment variables
+
+| env | description | example |
+|---|---|---|
+|PORT| port for runing| 3000 |
+|NODE_ENV| environment | development |
+|AWS_REGION| aws region |ap-southeast-1|
+|AWS_ACCESS_KEY_ID| aws access key| None |
+|AWS_SECRET_ACCESS_KEY| aws secret access key | None |
+|CLIENT_ID| mcv client | None|
+|CLIENT_SECRET| mcv secret client |None |
+|URL| host url |127.0.0.1:3000|
+
 
 ### Run dev
 
+```bash
+pnpm dev
+```
+
 ### Build production
+
+#### Static only
+
+```bash
+pnpm build
+```
+
+#### Serve with express
+
+```bash
+pnpm serve
+```
