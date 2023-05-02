@@ -1397,5 +1397,5 @@ textarea {
 }
 
 body {
-  padding-bottom: env(safe-area-inset-bottom, 0);
+  min-height: -webkit-fill-available;
 }
