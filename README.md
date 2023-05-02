@@ -4,6 +4,8 @@ Computer Engineering Essential Group 35 Final Project Report
 
 Want to find friends? Use Cvinder to find a match in your Mycourseville class.
 
+A Tinder clone project for finding friends in class is an app that allows students to connect with each other based on shared interests, hobbies, and classes. The app would work similarly to Tinder, where users swipe right to connect with potential matches and swipe left to pass.
+
 ## Contents
 
 - Members
@@ -11,7 +13,7 @@ Want to find friends? Use Cvinder to find a match in your Mycourseville class.
 - Requirements
   - Basic Requirements
   - Challenging Requirements
-- Gant chart and Assigned task
+- Gantt chart and Assigned task
 - Stack
 - Setup
   - Environment variables
@@ -114,6 +116,23 @@ pnpm install
 |CLIENT_SECRET| mcv secret client |None |
 |URL| host url |127.0.0.1:3000|
 
+### Gantt Chart
+
+
+| Task              | Assignee   | 20  | 21  | 22  | 23  | 24  | 25  | 26  | 27  | 28  | 29  | 30  |  1  |  2  |  3  |
+| ----------------- | ---------- | :-: | :-: | :-: | :-: | :-: | :-: | :-: | :-: | :-: | :-: | :-: | :-: | :-: | :-: |
+| Authentication    | Peam       |  X  |  X  |  X  |     |     |     |     |     |     |     |     |     |     |     |
+| Chat              | Tar        |     |     |     |     |     |     |     |     |     |     |     |     |     |     |
+| Match             | Peam       |     |     |  X  |  X  |  X  |  X  |  X  |     |     |     |     |     |     |     |
+| Home page         | Meen       |     |  X  |  X  |     |     |     |     |     |     |     |     |     |     |     |
+| Register / Login  | Meen       |     |     |  X  |  X  |     |     |     |     |     |     |     |     |     |     |
+| Profile           | Gong       |  X  |  X  |  X  |  X  |  X  |  X  |  X  |     |     |     |     |     |     |     |
+| Chat/Conversation | Tar        |     |     |     |  X  |  X  |  X  |  X  |  X  |     |     |     |     |     |     |
+| Chat/Overview     | Tar        |     |     |     |     |     |  X  |  X  |  X  |  X  |     |     |     |     |     |
+| Test & Fix bugs   | Everyone   |     |     |     |     |     |     |     |     |  X  |  X  |  X  |  X  |  X  |  X  |
+| Deployement       | Everyone   |     |     |     |     |     |     |     |     |  X  |  X  |  X  |  X  |  X  |  X  |
+| Documentations    | Tar & Peam |     |     |     |     |     |     |     |     |     |     |  X  |     |     |     |
+| Presentaion       | Tar & Peam |     |     |     |     |     |     |     |     |     |     |     |  X  |     |     |
 
 ### Run dev
 
