@@ -105,7 +105,7 @@ pnpm install
 
 | env | description | example |
 |---|---|---|
-|PORT| port for runing| 3000 |
+|PORT| port for running| 3000 |
 |NODE_ENV| environment | development |
 |AWS_REGION| aws region |ap-southeast-1|
 |AWS_ACCESS_KEY_ID| aws access key| None |
