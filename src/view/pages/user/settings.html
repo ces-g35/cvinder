@@ -40,6 +40,13 @@
   saveBioButton.addEventListener("click", saveBio);
   document.getElementById("swipe").src = "/icons/logo-bottom.svg";
   document.getElementById("settings").src = "/icons/user-bottom-selected.svg";
+  document.getElementById("logout").addEventListener("click", () => {
+    fetch("/api/user/logout", {
+      method: "GET",
+    }).then(() => {
+      window.location.href = "/";
+    });
+  });
 </script>
 
 <div class="mx-auto mt-5 mb-3">
@@ -73,3 +80,4 @@
   </button>
 </div>
 <div class="h-full"></div>
+<a href="#" id="logout" class="mb-5 text-center text-secondary">Sign Out</a>
