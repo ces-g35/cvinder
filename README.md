@@ -67,7 +67,18 @@ Want to find friends? Use Cvinder to find a match in your Mycourseville class.
 
 ### Basic Requirements
 
+- The web application is a Single-page Web Application.
+- The users log in to the web application using myCourseVille login.
+- The web application help students to find friends in their class and his/her will not study alone they may want friends for group work or ask for help.
+- The front-end of the web application does NOT use any libraries/frameworks/plugins other than what was used in Activity 7. Standard Web (JavaScript) APIs (https://developer.mozilla.org/enUS/docs/Web/API) that can be used in most modern web browsers without loading additional libraries/frameworks can be used.
+- The back-end of the web application does NOT use any libraries/frameworks/plugins other than what was used in Activity 8.
+- All members contribute to the development and the contribution of each member is according to a "plan" agreed among the members of the group. 
+
 ### Challenging Requirements
+
+- The web application displays and interacts with the user nicely on different screen sizes and orientations.
+- The application has a nice look and feel GUI.
+- The web application has a unique feature enhancing user experience (related to the main goal of the web application) via utilization of Web API (https://developer.mozilla.org/en-US/docs/Web/API).
 
 ## Gant chart and Assigned task
 
