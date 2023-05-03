@@ -119,7 +119,7 @@
     div.classList.add("px-2", "py-4");
     div_0_img.setAttribute("src", `/api/user/image/${obj.img_url}`);
     div_0_img.style.height = "60px";
-    div_0_img.style.width = "100%";
+    div_0_img.style.width = "60px";
     div_0_img.style.objectFit = "cover";
     div_0_img.style.borderRadius = "50%";
 
@@ -140,14 +140,25 @@
 
     fetchMatches();
 
-    const es = new EventSource("/api/chat/subscribe", {
+    if (window.es) {
+      console.log("remove existing es");
+      window.es.close();
+    }
+
+    window.es = new EventSource("/api/chat/subscribe", {
       withCredentials: true,
     });
 
-    es.addEventListener("_message", (e) => {
+    window.es.addEventListener("_message", (e) => {
       const eventPayload = JSON.parse(e.data).payload;
 
       updateMessage(eventPayload);
+    });
+
+    window.es.addEventListener("close", (e) => {
+      window.es.close();
+
+      window.es = undefined;
     });
   }
 
@@ -178,7 +189,7 @@
         <div class="mt-2 font-bold" id="match-view-container">
           <span>Your Matches</span>
         </div>
-        <div class="flex overflow-x-scroll" id="match-views"></div>
+        <div class="flex gap-2 overflow-x-scroll" id="match-views"></div>
         <div class="font-bold">
           <span>Messages</span>
         </div>

@@ -39,18 +39,29 @@
 
     await fetchUser();
 
-    const es = new EventSource("/api/chat/subscribe", {
+    if(window.es) {
+      console.log('remove existing es');
+      window.es.close();
+    }
+    
+    window.es = new EventSource("/api/chat/subscribe", {
       withCredentials: true,
     });
 
-    es.addEventListener("_message", (event) => {
+    window.es.addEventListener("_message", (event) => {
       console.log("received _message event:", event);
       handleMessage(JSON.parse(event.data).payload);
     });
 
-    es.addEventListener("seen", (event) => {
+    window.es.addEventListener("seen", (event) => {
       console.log("received seen event:", event);
       handleSeen(JSON.parse(event.data).payload);
+    });
+    
+    window.es.addEventListener("close", (e) => {
+      window.es.close();
+
+      window.es = undefined;
     });
   }
 

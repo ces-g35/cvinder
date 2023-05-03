@@ -14,7 +14,8 @@
     "build": "node scripts/_build.js",
     "start": "node src/index.js",
     "docs:build": "marp --html ./presentation/index.md",
-    "docs:preview" : "marp --server ./presentation"
+    "docs:preview" : "marp --server ./presentation",
+    "serve": "node src/start.js"
   },
   "type": "module"
 }

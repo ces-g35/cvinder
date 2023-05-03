@@ -217,15 +217,21 @@ async function postChat(req, res) {
 
 function subscribeChat(req, res) {
   const userId = req.profile.id;
-
   const headers = {
     "Content-Type": "text/event-stream",
     Connection: "keep-alive",
     "Cache-Control": "no-cache",
   };
   res.writeHead(200, headers);
-
   console.log(userId, "connected");
+
+  if (userId in subscribers) {
+    subscribers[userId].send("event: close\n\n");
+
+    subscribers[userId].end();
+
+    delete subscribers[userId];
+  }
 
   subscribers[userId] = res;
 
@@ -281,7 +287,6 @@ function emitEvent(recipientId, event, payload) {
   });
 
   if (!(recipientId in subscribers)) {
-    console.log("not subscribed");
     return;
   }
 

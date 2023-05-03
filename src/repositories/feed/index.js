@@ -16,32 +16,33 @@ import { buildSearchNewUserFromUpdatedCourse } from "../../utils/feed/index.js";
 async function feedBuilder(uid, prefGender, accessToken, lastUpdated) {
   const courses = await cvClient.getCourses(accessToken);
 
-  const findNewUserStatement = buildSearchNewUserFromUpdatedCourse(
-    courses,
-    uid,
-    lastUpdated,
-    prefGender
-  );
+  /** @type {Set<string>} */
+  const s = new Set();
+  let NextToken, result;
+  do {
+    const findNewUserStatement = buildSearchNewUserFromUpdatedCourse(
+      courses,
+      uid,
+      lastUpdated,
+      prefGender
+    );
+
+    findNewUserStatement.NextToken = NextToken;
+    result = await docClient.send(
+      new ExecuteStatementCommand(findNewUserStatement)
+    );
+
+    if (result.Items === undefined) return [];
+    result.Items.forEach((item) => s.add(item.student_id));
+    NextToken = result.NextToken;
+  } while (result.NextToken);
 
   const updateLastUpdatedStatement = {
     Statement: 'UPDATE "user" SET lastUpdatedAt = ? WHERE id = ?',
     Parameters: [Date.now(), uid],
   };
 
-  const result = (
-    await Promise.all([
-      docClient.send(new ExecuteStatementCommand(findNewUserStatement)),
-      docClient.send(new ExecuteStatementCommand(updateLastUpdatedStatement)),
-    ])
-  )[0];
-
-  /** @type {{id: string, student_id: string}[]} */
-  const items = result.Items;
-  if (items === undefined) return [];
-
-  /** @type {Set<string>} */
-  const s = new Set();
-  items.forEach((item) => s.add(item.student_id));
+  await docClient.send(new ExecuteStatementCommand(updateLastUpdatedStatement));
 
   // update new user to user-feed
   if (s.size !== 0) {
